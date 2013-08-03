@@ -1,17 +1,33 @@
 <?php
 	class Db {
+        const TYPE = "mysql";
 		const SERVER = "localhost";
 		const USERNAME = "root";
 		const PASSWORD = "klarinet";
 		const DB = "zzsng";
 				
 		function __construct() {
-			$this->link = @mysql_connect(self::SERVER, self::USERNAME, self::PASSWORD);
-			if(!$this->link) throw new Exception(master_lang::database_connection_error . ": " . mysql_error());
-			$db_selected = mysql_select_db(self::DB, $this->link);
-			if(!$db_selected) throw new Exception(master_lang::database_selection_error . ": " . mysql_error());
-			$this->query("SET CHARACTER SET utf8");
+            $this->connect();
+            $this->db_select();
+			$this->set_encoding();
 		}
+
+        // Establishes $this->link with db connection using the credentials set up in class constants.
+        function connect() {
+            $this->link = @mysql_connect(self::SERVER, self::USERNAME, self::PASSWORD);
+            if(!$this->link) throw new Exception(master_lang::database_connection_error . ": " . mysql_error());
+        }
+
+        // Select the database in self::DB as active.
+        function db_select() {
+            $db_selected = mysql_select_db(self::DB, $this->link);
+            if(!$db_selected) throw new Exception(master_lang::database_selection_error . ": " . mysql_error());
+        }
+
+        // Sets the connection encoding to utf-8.
+        function set_encoding() {
+            $this->query("SET CHARACTER SET utf8");
+        }
 		
 		// Inserts new record with given values to the table.
 		function insert($table, $pairs, $sql_pairs = array()) {
