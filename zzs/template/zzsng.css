@@ -1,0 +1,90 @@
+/* Header and footer */
+
+div#header {
+	width: 100%;
+
+	margin-bottom: 20px;
+	border-bottom: 1px solid black;
+
+	text-align: center;
+}
+
+div#footer {
+	width: 100%;
+
+	margin-top: 20px;
+	border-top: 1px solid black;
+	padding-top: 5px;
+
+	text-align: center;
+}
+
+/* Tables */
+
+td {
+	padding: 6px;
+}
+
+td.control {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+td.submit {
+	text-align: center;
+}
+
+td.number {
+	text-align: right;
+}
+
+
+/* Inline styles */
+
+span.code {
+	font-family: monospace;
+}
+
+span.term {
+	font-family: Hiragino Mincho Pro, MS Mincho;
+}
+
+/* Errors and warnings */
+
+div.notice {
+	font-weight: bold;
+	color: green;
+}
+
+div.warning {
+	font-weight: bold;
+	color: orange;
+}
+
+div.error {
+	font-weight: bold;
+	color: red;
+}
+
+div.master_error {
+	text-align: center;
+	font-size: 400%;
+	color: red;
+}
+
+.unimplemented { border: 2px solid red; background: pink;}
+
+/* Forms */
+
+input.long_text, textarea.long_text {
+	width: 300px;
+}
+
+form.inline {
+	display: inline;
+}
+
+textarea.data {
+    width: 400px;
+    height: 200px;
+}
