@@ -8,5 +8,7 @@ class master_lang {
     const sql_pairs_must_be_array = "SQL pairs must be an array.";
     const pair_collision = "Plain and SQL pair collision. Key «{{KEY}}» is present in both sets.";
     const query_failed = "SQL query failed. Error: «{{ERROR}}». Query: {{QUERY}}";
+
+    const sql_file_read_error = "SQL file read error.";
 }
 ?>
