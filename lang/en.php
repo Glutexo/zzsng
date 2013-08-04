@@ -1,6 +1,6 @@
 <?php
 class master_lang {
-    const unsupported_database_type = "Unsupported database type"
+    const unsupported_database_type = "Unsupported database type";
     const database_connection_error = "Database connection error";
     const database_selection_error = "Database selection error";
 
