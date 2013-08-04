@@ -124,7 +124,7 @@ class lang {
     const term_must_have_translation = "Překlad nelze nastavit jako prázdný.";
     const term_must_have_id = "Slovíčko nelze smazat, neznáme-li jeho ID.";
     const term_list_must_have_lesson = "Pro získání seznamu slovíček je třeba zvolit lekci.";
-    const lesson_empty = "V lekci «<span class=\"code\">{{NAME}}}</span>» nejsou žádná slovíčka.";
+    const lesson_empty = "V lekci «<span class=\"code\">{{NAME}}</span>» nejsou žádná slovíčka.";
     const term_list_could_not_be_obtained = "Nepodařilo se získat seznam slovíček pro lekci «<span class=\"code\">{{NAME}}</span>».";
     const term_delete_error = "Slovíčko «<span class=\"code\">{{TERM}}</span>» se nepodařilo smazat";
     const term_edit_error = "Slovíčko «<span class=\"code\">{{TERM}} </span>» se nepodařilo upravit";
