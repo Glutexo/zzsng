@@ -1,23 +1,7 @@
 <?php
 	class Db {
-/*
-        const TYPE = "mysql";
-        const SERVER = "localhost";
-        const USERNAME = "root";
-        const PASSWORD = "klarinet";
-        const DB = "zzsng";
-        const ENCODING = "utf8";
-*/
-        const TYPE = "pgsql";
-		const SERVER = "localhost";
-        const PORT = 5432;
-		const USERNAME = "php";
-		const PASSWORD = "Polskie Koleje Państwowe";
-		const DB = "zzsng";
-        const ENCODING = "utf8";
-
 		function __construct() {
-            switch(self::TYPE) {
+            switch(DbConfig::TYPE) {
                 case 'mysql':
                     break;
                 case 'pgsql':
@@ -30,9 +14,9 @@
 
         // Establishes $this->link with db connection using the credentials set up in class constants.
         function connect() {
-            switch(self::TYPE) {
+            switch(DbConfig::TYPE) {
                 case 'mysql':
-                    $this->link = @mysql_connect(self::SERVER, self::USERNAME, self::PASSWORD);
+                    $this->link = @mysql_connect(DbConfig::SERVER, DbConfig::USERNAME, DbConfig::PASSWORD);
                     $error = mysql_error();
                     if(!$error) {
                         $this->db_select();
@@ -40,12 +24,12 @@
                     }
                     break;
                 case 'pgsql':
-                    $con_string  =  "host='" . self::SERVER . "'";
-                    $con_string .= " port='" . self::PORT . "'";
-                    $con_string .= " dbname='" . self::DB . "'";
-                    $con_string .= " user='" . self::USERNAME . "'";
-                    $con_string .= " password='" . self::PASSWORD . "'";
-                    $con_string .= " options='--client_encoding=" . self::ENCODING . "'";
+                    $con_string  =  "host='" . DbConfig::SERVER . "'";
+                    $con_string .= " port='" . DbConfig::PORT . "'";
+                    $con_string .= " dbname='" . DbConfig::DB . "'";
+                    $con_string .= " user='" . DbConfig::USERNAME . "'";
+                    $con_string .= " password='" . DbConfig::PASSWORD . "'";
+                    $con_string .= " options='--client_encoding=" . DbConfig::ENCODING . "'";
 
                     $this->link = @pg_connect($con_string);
                     if($this->link) $error = pg_last_error($this->link);
@@ -57,15 +41,15 @@
             }
         }
 
-        // Select the database in self::DB as active.
+        // Select the database in DbConfig::DB as active.
         function db_select() {
-            $db_selected = mysql_select_db(self::DB, $this->link);
+            $db_selected = mysql_select_db(DbConfig::DB, $this->link);
             if(!$db_selected) throw new Exception(master_lang::database_selection_error . ": " . mysql_error());
         }
 
-        // Sets the connection encoding to self::ENCODING.
+        // Sets the connection encoding to DbConfig::ENCODING.
         function set_encoding() {
-            $this->query("SET CHARACTER SET " . self::ENCODING);
+            $this->query("SET CHARACTER SET " . DbConfig::ENCODING);
         }
 		
 		// Inserts new record with given values to the table.
@@ -99,7 +83,7 @@
 		
 		// Runs a query and returns its result as an object.
 		function query($q) {
-            switch(self::TYPE) {
+            switch(DbConfig::TYPE) {
                 case 'mysql':
                     $res = mysql_query($q, $this->link);
                     if(mysql_errno()) $error = mysql_error();
@@ -192,7 +176,7 @@
 		}
 		
 		function escape($s) {
-            switch(self::TYPE) {
+            switch(DbConfig::TYPE) {
                 case 'mysql':
                     $escaped = mysql_real_escape_string($s);
                     break;
@@ -204,7 +188,7 @@
 		}
 
         function escape_column($col) {
-            switch(self::TYPE) {
+            switch(DbConfig::TYPE) {
                 case 'mysql':
                     $escaped = "`$col`";
                     break;

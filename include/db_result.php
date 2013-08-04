@@ -6,7 +6,7 @@
 		
 		// Object alias of mysql_fetch_assoc().
 		function fetch_assoc() {
-            switch(Db::TYPE) {
+            switch(DbConfig::TYPE) {
                 case 'mysql':
                     $assoc = mysql_fetch_assoc($this->res);
                     break;
@@ -19,7 +19,7 @@
 		
 		// Object alias of mysql_fetch_object().
 		function fetch_object() {
-            switch(Db::TYPE) {
+            switch(DbConfig::TYPE) {
                 case 'mysql':
                     $object = mysql_fetch_object($this->res);
                     break;
@@ -31,7 +31,7 @@
 		}
 		
 		function fetch_single_field() {
-            switch(Db::TYPE) {
+            switch(DbConfig::TYPE) {
                 case 'mysql':
                     list($field) = mysql_fetch_row($this->res);
                     break;
@@ -43,7 +43,7 @@
 		}
 
 		function fetch_single_fields() {
-            switch(Db::TYPE) {
+            switch(DbConfig::TYPE) {
                 case 'mysql':
                     while($field = mysql_fetch_row($this->res))
                         $fields[] = $field[0];
@@ -57,7 +57,7 @@
 		}
 
 		function fetch_rows() {
-            switch(Db::TYPE) {
+            switch(DbConfig::TYPE) {
                 case 'mysql':
                     while($row = mysql_fetch_row($this->res))
                         $rows[] = $row;

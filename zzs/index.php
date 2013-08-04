@@ -44,5 +44,9 @@
 			$this->section_default(true);
 		}
 
+        public function section_setup() {
+            $setup = new Setup;
+            $this->out = $setup->out();
+        }
 	}
 ?>

@@ -146,5 +146,9 @@ class lang {
     const bulk = "Bulk";
     const languages = "Languages";
     const lessons = "Lessons";
+
+    // Setup.
+    const structure_import_success = "Database structure import successful.";
+    const structure_import_error = "Database structure import failed";
 }
 ?>

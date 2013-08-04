@@ -146,5 +146,9 @@ class lang {
     const bulk = "Dávka";
     const languages = "Jazyky";
     const lessons = "Lekce";
+
+    // Setup.
+    const structure_import_success = "Import databázové struktury proběhl úspěšně.";
+    const structure_import_error = "Import databázové struktury se nezdařil";
 }
 ?>
