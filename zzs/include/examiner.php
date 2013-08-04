@@ -13,7 +13,7 @@
 		
 		function __construct() {
 			parent::__construct();
-			$row = $this->db->select_where(self::TABLE_EXAM_RESULTS, null, "MAX(" . self::COL_CYCLE . ") " . self::COL_CYCLE)->fetch_assoc();
+			$row = $this->db->select_where(self::TABLE_EXAM_RESULTS, null, "MAX(" . $this->db->escape_column(self::COL_CYCLE) . ") " . $this->db->escape_column(self::COL_CYCLE))->fetch_assoc();
 			if($row[self::COL_CYCLE]) $this->cycle = $row[self::COL_CYCLE];
 		}
 		
@@ -129,14 +129,14 @@
 		function pick($moved = false) {
 			$retval = false;
 			
-			$row = $this->db->select_where(self::TABLE_EXAM_TERMS, null, "COUNT(*) count")->fetch_assoc();
+			$row = $this->db->select_where(self::TABLE_EXAM_TERMS, null, "COUNT(*) " . $this->db->escape("count"))->fetch_assoc();
 			if($row["count"]) {
-				$row = $this->db->select_where(self::TABLE_EXAM_TERMS,"1", "*", "`" . self::COL_ORDER . "`", "1")->fetch_assoc();
-				$this->db->delete_where(self::TABLE_EXAM_TERMS, self::COL_TERM . "='" . $row[self::COL_TERM] . "'");
+				$row = $this->db->select_where(self::TABLE_EXAM_TERMS, "TRUE", "*", $this->db->escape_column(self::COL_ORDER), "1")->fetch_assoc();
+				$this->db->delete_where(self::TABLE_EXAM_TERMS, $this->db->escape_column(self::COL_TERM) . "='" . $row[self::COL_TERM] . "'");
 				$retval = new Term($row[self::COL_TERM]);
 			}
 			elseif(!$moved) { // If the mistakes are already moved, there is no need to make an infinite loop.
-				if($mistakes = $this->db->select_where(self::TABLE_EXAM_MISTAKES,"1","*","`".self::COL_ORDER."`")->fetch_assocs()) {
+				if($mistakes = $this->db->select_where(self::TABLE_EXAM_MISTAKES,"TRUE","*",$this->db->escape_column(self::COL_ORDER))->fetch_assocs()) {
                     $i = 1;
 					foreach($mistakes as $row) {
 						$this->db->insert(self::TABLE_EXAM_TERMS, array(
@@ -155,29 +155,29 @@
 		
 		// Saves the term to the mistake list and decrements the appropriate value in the cycle information.
 		function mistake($term) {
-            $max = $this->db->select_where(self::TABLE_EXAM_MISTAKES, "1", "MAX(`" . self::COL_ORDER . "`)")->fetch_single_field();
+            $max = $this->db->select_where(self::TABLE_EXAM_MISTAKES, "TRUE", "MAX(" . $this->db->escape_column(self::COL_ORDER) . ")")->fetch_single_field();
 			$this->db->insert(self::TABLE_EXAM_MISTAKES, array(
                 self::COL_TERM => $term,
                 self::COL_ORDER => $max + 1
             ));
 			
-			$row = $this->db->select_where(self::TABLE_EXAM_RESULTS, self::COL_CYCLE . "=" . $this->cycle, self::COL_MISTAKES)->fetch_assoc();
-			$this->db->update_where(self::TABLE_EXAM_RESULTS, self::COL_CYCLE . "=" . $this->cycle, array(self::COL_MISTAKES => ++$row[self::COL_MISTAKES]));
+			$row = $this->db->select_where(self::TABLE_EXAM_RESULTS, $this->db->escape_column(self::COL_CYCLE) . "=" . $this->cycle, self::COL_MISTAKES)->fetch_assoc();
+			$this->db->update_where(self::TABLE_EXAM_RESULTS, $this->db->escape_column(self::COL_CYCLE) . "=" . $this->cycle, array(self::COL_MISTAKES => ++$row[self::COL_MISTAKES]));
 
 			return(true);
 		}
 				
 		// Increments the appropriate value in the cycle information.
 		function hit() {
-			$row = $this->db->select_where(self::TABLE_EXAM_RESULTS, self::COL_CYCLE . "=" . $this->cycle, self::COL_HITS)->fetch_assoc();
-			$this->db->update_where(self::TABLE_EXAM_RESULTS, self::COL_CYCLE . "=" . $this->cycle, array(self::COL_HITS => ++$row[self::COL_HITS]));
+			$row = $this->db->select_where(self::TABLE_EXAM_RESULTS, $this->db->escape_column(self::COL_CYCLE) . "=" . $this->cycle, self::COL_HITS)->fetch_assoc();
+			$this->db->update_where(self::TABLE_EXAM_RESULTS, $this->db->escape_column(self::COL_CYCLE) . "=" . $this->cycle, array(self::COL_HITS => ++$row[self::COL_HITS]));
 
 			return(true);
 		}
 		
 		// Puts some brief statistics to the notices.
 		function stats() {
-			$row = $this->db->select_where(self::TABLE_EXAM_RESULTS, self::COL_CYCLE . "=(SELECT MIN(" . self::COL_CYCLE . ") FROM " . self::TABLE_EXAM_RESULTS . ")", array(self::COL_HITS, self::COL_MISTAKES))->fetch_assoc();
+			$row = $this->db->select_where(self::TABLE_EXAM_RESULTS, $this->db->escape_column(self::COL_CYCLE) . "=(SELECT MIN(" . $this->db->escape_column(self::COL_CYCLE) . ") FROM " . self::TABLE_EXAM_RESULTS . ")", array(self::COL_HITS, self::COL_MISTAKES))->fetch_assoc();
 			$sum = $row[self::COL_HITS] + $row[self::COL_MISTAKES];
 			
 			if($row[self::COL_HITS] == 0) $hits = lang::no_hits;

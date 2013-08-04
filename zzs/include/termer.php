@@ -80,16 +80,16 @@
 			try {
                 switch($_SESSION["sort"]) {
                     case "order":
-                        $orderby = "`" . Term::COL_ORDER . "`";
+                        $orderby = $this->db->escape_column(Term::COL_ORDER) . " ASC";
                         break;
                     case "term":
                     default:
-                        $orderby = implode(",", array(Term::COL_TERM, Term::COL_METADATA, Term::COL_TRANSLATION));
+                        $orderby = implode(",", array(Term::COL_TERM . " ASC", Term::COL_METADATA . " ASC", Term::COL_TRANSLATION . " ASC"));
                 }
 				$out = $this->db->fetch_assocs("
 					SELECT *
 					FROM " . Term::TABLE_TERMS . "
-					WHERE " . Term::COL_LESSON . "='" . $this->lesson->getId() . "'
+					WHERE " . $this->db->escape_column(Term::COL_LESSON) . "='" . $this->lesson->getId() . "'
 					ORDER BY " . $orderby);
 				if(!$out) $this->warning[] = str_replace("{{NAME}}", $name, lang::lesson_empty);
 			} catch(Exception $e) {
@@ -161,10 +161,10 @@
 		
 		function find_duplicates($term, $same_language = true) {
 			return($this->db->fetch_rows("
-				SELECT `l`.`" . Lesson::COL_ID . "`,`l`.`" . Lesson::COL_NAME . "`,`s`.`" . Term::COL_ID . "`
-				FROM `" . Term::TABLE_TERMS . "` `s`
-					JOIN `" . Lesson::TABLE_LESSONS . "` `l` ON `s`.`" . Term::COL_LESSON . "`=`l`.`" . Lesson::COL_ID . "`
-				WHERE `s`.`" . Term::COL_TERM . "` LIKE '" . $this->db->escape($term) ."'"));
+				SELECT l." . $this->db->escape_column(Lesson::COL_ID) . ",l." . $this->db->escape_column(Lesson::COL_NAME) . ",s." . $this->db->escape_column(Term::COL_ID) . "
+				FROM " . Term::TABLE_TERMS . " s
+					JOIN " . Lesson::TABLE_LESSONS . " l ON s." . $this->db->escape_column(Term::COL_LESSON) . "=l." . $this->db->escape_column(Lesson::COL_ID) . "
+				WHERE s." . $this->db->escape_column(Term::COL_TERM) . " LIKE '" . $this->db->escape($term) ."'"));
 		}
 	}
 ?>

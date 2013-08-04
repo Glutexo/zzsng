@@ -1,5 +1,6 @@
 <?php
 class master_lang {
+    const unsupported_database_type = "Nepodporovaný typ databáze.";
     const database_connection_error = "Selhalo připojení k databázi";
     const database_selection_error = "Selhalo zvolení databáze";
 

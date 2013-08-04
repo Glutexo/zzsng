@@ -79,11 +79,12 @@
 			try {
 				$out = $this->db->fetch_assocs("SELECT * FROM " . Language::TABLE_LANGUAGES . " ORDER BY " . Language::COL_NAME);
 				if(!$out) $this->warning[] = lang::no_language_exists;
-				
-				foreach($out as $k => $language) {
-					$language_obj = new Language($language[Language::COL_ID]);
-					$out[$k]["lesson_count"] = $language_obj->getLessonCount();
-				}
+                else {
+                    foreach($out as $k => $language) {
+                        $language_obj = new Language($language[Language::COL_ID]);
+                        $out[$k]["lesson_count"] = $language_obj->getLessonCount();
+                    }
+                }
 			} catch(Exception $e) {
 				$this->error[] = lang::language_list_could_not_be_obtained . ": " . $e->getMessage();
 				$out = array();
@@ -138,7 +139,7 @@
 		function set_default() {
 			$name = $this->language->getName();
 			try {
-				$original = $this->db->select_where(Language::TABLE_LANGUAGES, "`" . Language::COL_DEFAULT . "`" . "='1'", Language::COL_ID)->fetch_assoc();
+				$original = $this->db->select_where(Language::TABLE_LANGUAGES, $this->db->escape_column(Language::COL_DEFAULT) . "='1'", Language::COL_ID)->fetch_assoc();
 				if(is_array($original)) { // To prevent failures when no languages present.
 					$original_obj = new Language($original[Language::COL_ID]);
 					$original_obj->setDefault(false);

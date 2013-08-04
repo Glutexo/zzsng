@@ -20,7 +20,7 @@
 				$this->name = $tabledata[self::COL_NAME];
 				$this->language = $tabledata[self::COL_LANGUAGE];
 				
-				$res = $this->db->select_where(Term::TABLE_TERMS, Term::COL_LESSON . "='" . $id . "'", Term::COL_ID, "`".Term::COL_ORDER."`");
+				$res = $this->db->select_where(Term::TABLE_TERMS, Term::COL_LESSON . "='" . $id . "'", Term::COL_ID, $this->db->escape_column(Term::COL_ORDER));
 				while($row = $res->fetch_assoc())
 					$this->terms[] = new Term($row[Term::COL_ID]);
 			}
@@ -129,7 +129,7 @@
 		
 		static function getLessonTermCount($id) {
 			$db = new Db;
-			return($db->query("SELECT COUNT(*) FROM `" . Term::TABLE_TERMS . "` WHERE `" . Term::COL_LESSON . "`=" . (int) $id)->fetch_single_field());
+			return($db->query("SELECT COUNT(*) FROM " . Term::TABLE_TERMS . " WHERE " . $db->escape_column(Term::COL_LESSON) . "=" . (int) $id)->fetch_single_field());
 		}
 	}
 ?>

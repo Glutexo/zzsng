@@ -1,21 +1,60 @@
 <?php
 	class Db {
+/*
         const TYPE = "mysql";
+        const SERVER = "localhost";
+        const USERNAME = "root";
+        const PASSWORD = "klarinet";
+        const DB = "zzsng";
+        const ENCODING = "utf8";
+*/
+        const TYPE = "pgsql";
 		const SERVER = "localhost";
-		const USERNAME = "root";
-		const PASSWORD = "klarinet";
+        const PORT = 5432;
+		const USERNAME = "php";
+		const PASSWORD = "Polskie Koleje Państwowe";
 		const DB = "zzsng";
-				
+        const ENCODING = "utf8";
+
 		function __construct() {
+            switch(self::TYPE) {
+                case 'mysql':
+                    break;
+                case 'pgsql':
+                    break;
+                default: throw new Exception(master_lang::unsupported_database_type);
+            }
+
             $this->connect();
-            $this->db_select();
-			$this->set_encoding();
 		}
 
         // Establishes $this->link with db connection using the credentials set up in class constants.
         function connect() {
-            $this->link = @mysql_connect(self::SERVER, self::USERNAME, self::PASSWORD);
-            if(!$this->link) throw new Exception(master_lang::database_connection_error . ": " . mysql_error());
+            switch(self::TYPE) {
+                case 'mysql':
+                    $this->link = @mysql_connect(self::SERVER, self::USERNAME, self::PASSWORD);
+                    $error = mysql_error();
+                    if(!$error) {
+                        $this->db_select();
+                        $this->set_encoding();
+                    }
+                    break;
+                case 'pgsql':
+                    $con_string  =  "host='" . self::SERVER . "'";
+                    $con_string .= " port='" . self::PORT . "'";
+                    $con_string .= " dbname='" . self::DB . "'";
+                    $con_string .= " user='" . self::USERNAME . "'";
+                    $con_string .= " password='" . self::PASSWORD . "'";
+                    $con_string .= " options='--client_encoding=" . self::ENCODING . "'";
+
+                    $this->link = @pg_connect($con_string);
+                    if($this->link) $error = pg_last_error($this->link);
+            }
+            if(!$this->link) {
+                $message = master_lang::database_connection_error;
+                if(!empty($error)) $message .= ": " . $error;
+                throw new Exception($message);
+            }
         }
 
         // Select the database in self::DB as active.
@@ -24,9 +63,9 @@
             if(!$db_selected) throw new Exception(master_lang::database_selection_error . ": " . mysql_error());
         }
 
-        // Sets the connection encoding to utf-8.
+        // Sets the connection encoding to self::ENCODING.
         function set_encoding() {
-            $this->query("SET CHARACTER SET utf8");
+            $this->query("SET CHARACTER SET " . self::ENCODING);
         }
 		
 		// Inserts new record with given values to the table.
@@ -44,7 +83,7 @@
 			// Compose the query.
 			$q = "INSERT INTO $table (";
 			foreach($vals as $k => $v) {
-				$q .= "`$k`" . ","; // Sloupce
+				$q .= $this->escape_column($k) . ","; // Sloupce
 			}
 			$q = substr($q, 0, -1) . ") VALUES (";
 			foreach($vals as $v) {
@@ -54,17 +93,30 @@
                 else $q .= "'" . addslashes($val) . "',";
 			}
 			$q = substr($q, 0, -1) . ")";
-			
+
 			return($this->query($q));
 		}
 		
 		// Runs a query and returns its result as an object.
 		function query($q) {
-			$res = mysql_query($q, $this->link);
-			if(mysql_errno()) throw new Exception(strtr(master_lang::query_failed, array(
-                "{{ERROR}}" => mysql_error(),
-                "{{QUERY}}" => $q
-            )));
+            switch(self::TYPE) {
+                case 'mysql':
+                    $res = mysql_query($q, $this->link);
+                    if(mysql_errno()) $error = mysql_error();
+                    break;
+                case 'pgsql':
+                    $res = pg_query($this->link, $q);
+                    $error = pg_last_error($this->link);
+                    break;
+            }
+
+            if(!empty($error)) {
+                throw new Exception(strtr(master_lang::query_failed, array(
+                    "{{ERROR}}" => $error,
+                    "{{QUERY}}" => $q
+                )));
+            }
+
 			$res_obj = new DbResult($res);
 			return($res_obj);
 		}
@@ -85,8 +137,8 @@
 		}
 		
 		// Deletes a record from the table according to the given condition.
-		function delete_where($table, $cond = "1") {
-			if(!$cond) $cond = "1";
+		function delete_where($table, $cond = "TRUE") {
+			if(!$cond) $cond = "TRUE";
 			if(is_array($cond)) $cond = implode(" AND ", $cond);
 			return($this->query("DELETE FROM $table WHERE $cond"));
 		}
@@ -103,17 +155,17 @@
 		
 		function update_where($table, $cond, $pairs) {
 			foreach($pairs as $k => $v) {
-				$vals[] = "`$k`='" . addslashes($v) . "'";
+				$vals[] = $this->escape_column($k) . "='" . addslashes($v) . "'";
 			}
 			if(is_array($cond)) $cond = implode(" AND ", $cond);
 			return($this->query("UPDATE $table SET " . implode(",", $vals) . " WHERE $cond"));
 		}
 		
 		// Finds records in a table according to the given conditions and returns the result.
-		function select_where($table, $cond = "1", $sloupce = "*", $orderby = "", $limit = "") {
+		function select_where($table, $cond = "TRUE", $sloupce = "*", $orderby = "", $limit = "") {
 			if(is_array($sloupce)) $sloupce = implode(",", $sloupce);
 			if(is_array($cond)) $cond = implode(" AND ", $cond);
-			if(!$cond) $cond = "1";
+			if(!$cond) $cond = "TRUE";
 			if(!$sloupce) $sloupce = "*";
 			if($orderby) {
 				$orderby_suffix = " ORDER BY ";
@@ -136,13 +188,34 @@
 		// Empties a table.
 		function truncate($table, $escaped = false) {
 			if(!$escaped) $table = $this->escape($table);
-			return($this->query("TRUNCATE TABLE `$table`"));
+			return($this->query("TRUNCATE TABLE $table"));
 		}
 		
 		function escape($s) {
-			return(mysql_real_escape_string($s));
+            switch(self::TYPE) {
+                case 'mysql':
+                    $escaped = mysql_real_escape_string($s);
+                    break;
+                case 'pgsql':
+                    $escaped = pg_escape_string($this->link, $s);
+                    break;
+            }
+			return($escaped);
 		}
-		
+
+        function escape_column($col) {
+            switch(self::TYPE) {
+                case 'mysql':
+                    $escaped = "`$col`";
+                    break;
+                case 'pgsql':
+                    $escaped = "\"$col\"";
+                    break;
+            }
+
+            return $escaped;
+        }
+
 		function __destruct() {
 //			mysql_close($this->link);
 		}

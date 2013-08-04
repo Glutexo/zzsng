@@ -6,29 +6,68 @@
 		
 		// Object alias of mysql_fetch_assoc().
 		function fetch_assoc() {
-			return(mysql_fetch_assoc($this->res));
+            switch(Db::TYPE) {
+                case 'mysql':
+                    $assoc = mysql_fetch_assoc($this->res);
+                    break;
+                case 'pgsql':
+                    $assoc = pg_fetch_assoc($this->res);
+                    break;
+            }
+			return($assoc);
 		}
 		
 		// Object alias of mysql_fetch_object().
 		function fetch_object() {
-			return(mysql_fetch_object($this->res));
+            switch(Db::TYPE) {
+                case 'mysql':
+                    $object = mysql_fetch_object($this->res);
+                    break;
+                case 'pgsql':
+                    $object = pg_fetch_object($this->res);
+                    break;
+            }
+			return($object);
 		}
 		
 		function fetch_single_field() {
-			list($field) = mysql_fetch_row($this->res);
+            switch(Db::TYPE) {
+                case 'mysql':
+                    list($field) = mysql_fetch_row($this->res);
+                    break;
+                case 'pgsql':
+                    list($field) = pg_fetch_row($this->res);
+                    break;
+            }
 			return($field);
 		}
 
 		function fetch_single_fields() {
-			while($field = mysql_fetch_row($this->res))
-				$fields[] = $field[0];
+            switch(Db::TYPE) {
+                case 'mysql':
+                    while($field = mysql_fetch_row($this->res))
+                        $fields[] = $field[0];
+                    break;
+                case 'pgsql':
+                    while($field = pg_fetch_row($this->res))
+                        $fields[] = $field[0];
+                    break;
+            }
 			return($fields);
 		}
 
 		function fetch_rows() {
-			while($row = mysql_fetch_row($this->res))
-				$rows[] = $row;
-			return($rows);
+            switch(Db::TYPE) {
+                case 'mysql':
+                    while($row = mysql_fetch_row($this->res))
+                        $rows[] = $row;
+                    break;
+                case 'pgsql':
+                    while($row = pg_fetch_row($this->res))
+                        $rows[] = $row;
+                    break;
+            }
+ 			return($rows);
 		}
 
 		function fetch_assocs() {

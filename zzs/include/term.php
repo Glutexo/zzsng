@@ -103,7 +103,7 @@
 					self::COL_COMMENT => $this->comment,
 					self::COL_LAST_CHANGE => AdminFunctions::dbtime()));
 			else { // Add.
-                $max = $this->db->select_where(self::TABLE_TERMS, self::COL_LESSON . " = " . $this->lesson, "MAX(`".self::COL_ORDER."`)")->fetch_single_field();
+                $max = $this->db->select_where(self::TABLE_TERMS, self::COL_LESSON . " = " . $this->lesson, "MAX(" . $this->db->escape_column(self::COL_ORDER) . ")")->fetch_single_field();
 
 				$time = AdminFunctions::dbtime();
 				$this->db->insert(self::TABLE_TERMS, array(
