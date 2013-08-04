@@ -78,7 +78,7 @@ CREATE SEQUENCE "groups_id_seq"
 
 CREATE TABLE "groups" (
     "id" integer DEFAULT "nextval"('"groups_id_seq"'::"regclass") NOT NULL,
-    "name" character varying COLLATE "pg_catalog"."cs_CZ.UTF-8" NOT NULL,
+    "name" character varying COLLATE "pg_catalog"."cs_CZ" NOT NULL,
     "created" timestamp with time zone NOT NULL,
     "last_change" timestamp with time zone NOT NULL
 );
@@ -104,7 +104,7 @@ CREATE SEQUENCE "languages_id_seq"
 
 CREATE TABLE "languages" (
     "id" integer DEFAULT "nextval"('"languages_id_seq"'::"regclass") NOT NULL,
-    "name" character varying COLLATE "pg_catalog"."cs_CZ.UTF-8" NOT NULL,
+    "name" character varying COLLATE "pg_catalog"."cs_CZ" NOT NULL,
     "default" smallint DEFAULT 0 NOT NULL,
     "created" timestamp with time zone NOT NULL,
     "last_change" timestamp with time zone NOT NULL
@@ -131,7 +131,7 @@ CREATE SEQUENCE "lessons_id_seq"
 
 CREATE TABLE "lessons" (
     "id" integer DEFAULT "nextval"('"lessons_id_seq"'::"regclass") NOT NULL,
-    "name" character varying COLLATE "pg_catalog"."cs_CZ.UTF-8" NOT NULL,
+    "name" character varying COLLATE "pg_catalog"."cs_CZ" NOT NULL,
     "language" integer NOT NULL,
     "created" timestamp with time zone NOT NULL,
     "last_change" timestamp with time zone NOT NULL,
@@ -170,7 +170,7 @@ CREATE SEQUENCE "states_id_seq"
 
 CREATE TABLE "states" (
     "id" integer DEFAULT "nextval"('"states_id_seq"'::"regclass") NOT NULL,
-    "name" character varying COLLATE "pg_catalog"."cs_CZ.UTF-8" NOT NULL,
+    "name" character varying COLLATE "pg_catalog"."cs_CZ" NOT NULL,
     "learned" smallint DEFAULT 0 NOT NULL,
     "problematic" smallint DEFAULT 0 NOT NULL,
     "created" time without time zone NOT NULL,
@@ -200,10 +200,10 @@ CREATE TABLE "terms" (
     "id" integer DEFAULT "nextval"('"terms_id_seq"'::"regclass") NOT NULL,
     "order" integer NOT NULL,
     "lesson" integer NOT NULL,
-    "term" character varying COLLATE "pg_catalog"."cs_CZ.UTF-8" NOT NULL,
-    "metadata" character varying COLLATE "pg_catalog"."cs_CZ.UTF-8",
-    "translation" character varying COLLATE "pg_catalog"."cs_CZ.UTF-8" NOT NULL,
-    "comment" "text" COLLATE "pg_catalog"."cs_CZ.UTF-8",
+    "term" character varying COLLATE "pg_catalog"."cs_CZ" NOT NULL,
+    "metadata" character varying COLLATE "pg_catalog"."cs_CZ",
+    "translation" character varying COLLATE "pg_catalog"."cs_CZ" NOT NULL,
+    "comment" "text" COLLATE "pg_catalog"."cs_CZ",
     "status" integer DEFAULT 0 NOT NULL,
     "created" timestamp with time zone NOT NULL,
     "last_change" timestamp with time zone NOT NULL
