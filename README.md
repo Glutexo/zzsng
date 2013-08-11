@@ -89,3 +89,6 @@ The last new features added only for the purpose of deployment to [Heroku](http:
 But if anybody wants to fix some bugs or implement new features to this legacy version, feel free to submit your patches.
 
 UPDATE: An exception has been made to the no-new-features statement. I needed an option to change order of terms in a lesson, so this option has been added.
+
+But if anybody wants to fix some bugs or implement new features to this legacy version, feel free to submit your patches.
+
