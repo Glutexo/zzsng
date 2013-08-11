@@ -76,6 +76,10 @@ The data in the textarea have to be in the same format as with the CSV file: Sep
 
 If there is an error in the CSV file or the data in the textarea, the invalid lines are presented to the user as a part of an error message and nothing will be imported.
 
+## Localization ##
+
+English and Czech localization of the user interface is supported. The language can be switched by altering the _DEFAULT_LANGUAGE_ constant in the _index.php_ file. Use _'en'_ for English, _'cs'_ for Czech language.
+
 # Blurb #
 
 This application was never meant to be public and it has been written a long time ago. It doesn’t use any framework and my programming skills were pretty mediocre the time it was created. I am not planning to continue with the development, because it does everything I need and if I’d want to make it more usable or to add more features, I’d prefere to rewrite it completely, probably abandoning [PHP](http://www.php.net) and using [Ruby on Rails](http://rubyonrails.org) instead.
