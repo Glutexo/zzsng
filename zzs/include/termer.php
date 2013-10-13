@@ -55,6 +55,13 @@
                     }
 				}
 
+				// Save term order.
+
+				if(isset($_POST['save_order'])) {
+					$order = $_POST['order'];
+					$this->save_order($_POST['order']);
+					$this->notice[] = lang::order_save_succeeded;
+				}
 			} catch(Exception $e) {
 				$this->error[] = lang::action_failed . ": " . $e->getMessage();
 			}
@@ -165,6 +172,15 @@
 				FROM " . Term::TABLE_TERMS . " s
 					JOIN " . Lesson::TABLE_LESSONS . " l ON s." . $this->db->escape_column(Term::COL_LESSON) . "=l." . $this->db->escape_column(Lesson::COL_ID) . "
 				WHERE s." . $this->db->escape_column(Term::COL_TERM) . " LIKE '" . $this->db->escape($term) ."'"));
+		}
+
+		function save_order($orders) {
+			// Don’t trust the received data. Only order is preserved.
+			asort($orders);
+			foreach(array_keys($orders) as $k => $term_id) {
+				$pairs = array(Term::COL_ORDER => $k + 1);
+				$this->db->update(Term::TABLE_TERMS, $term_id, $pairs);
+			}
 		}
 	}
 ?>

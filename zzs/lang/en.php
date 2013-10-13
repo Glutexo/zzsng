@@ -139,6 +139,7 @@ class lang {
     const term_list_title = "Seznam slovíček pro lekci «<span class=\"code\">{{LESSON}}</span>»";
     const sort_by_order = "Sort by order";
     const sort_by_term = "Sort alphabetically";
+	const order_save_succeeded = "Term order saved.";
 
     // User interface.
     const exam = "Exam";

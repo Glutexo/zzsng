@@ -3,6 +3,7 @@
 	<div>
 		<form action="index.php?section=terms" method="POST">
 			<input type="hidden" name="lesson" value="{{LESSON_ID}}" />
+
 			<table>
 			<thead>
 				<th><input type="submit" name="sort[order]" value="{{$LANG['order']}}" title="{{$LANG['sort_by_order']}}" /></th>
@@ -18,7 +19,9 @@
 					<td class="selection unimplemented" style="display: none;">
 						<input type="checkbox" id="selection_{{$TERMS[$@k]['id']}}" name="selection[{{$TERMS[$@k]['id']}}][]" value="selected" />
 					</td>
-                    <td class="short_text order">{{$TERMS[$@k]['order']}}.</td>
+                    <td class="short_text order">
+						<input type="text" class="small_number" name="order[{{$TERMS[$@k]['id']}}]" value="{{$TERMS[$@k]['order']}}" />.
+					</td>
 					<td class="short_text term">
 						<label for="selection_{{$TERMS[$@k]['id']}}">{{$TERMS[$@k]['term']}}</label>
 					</td>
@@ -34,6 +37,15 @@
 				</tr>
 			<?tpl end ?>
 			</tbody>
+			<tfoot>
+				<tr>
+					<td style="display: none;">&nbsp;</td>
+					<td>
+						<input type="submit" name="save_order" value="Uložit pořadí" />
+					</td>
+					<td colspan="6">&nbsp;</td>
+				</tr>
+			</tfoot>
 			</table>
 		</form>
 	</div>

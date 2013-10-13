@@ -87,3 +87,5 @@ This application was never meant to be public and it has been written a long tim
 The last new features added only for the purpose of deployment to [Heroku](http://www.heroku.com) and publishing to [GitHub](https://github.com) were the English localization of the code, comments and the user interface and the support for [PostgreSQL database](http://www.postgresql.org).
 
 But if anybody wants to fix some bugs or implement new features to this legacy version, feel free to submit your patches.
+
+UPDATE: An exception has been made to the no-new-features statement. I needed an option to change order of terms in a lesson, so this option has been added.

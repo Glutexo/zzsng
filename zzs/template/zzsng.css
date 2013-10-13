@@ -88,3 +88,5 @@ textarea.data {
     width: 400px;
     height: 200px;
 }
+
+input.small_number { width: 40px; }
