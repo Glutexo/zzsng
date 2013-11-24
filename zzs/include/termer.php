@@ -93,11 +93,13 @@
                     default:
                         $orderby = implode(",", array(Term::COL_TERM . " ASC", Term::COL_METADATA . " ASC", Term::COL_TRANSLATION . " ASC"));
                 }
-				$out = $this->db->fetch_assocs("
+
+                $sql = "
 					SELECT *
 					FROM " . Term::TABLE_TERMS . "
 					WHERE " . $this->db->escape_column(Term::COL_LESSON) . "='" . $this->lesson->getId() . "'
-					ORDER BY " . $orderby);
+					ORDER BY " . $orderby;
+				$out = $this->db->fetch_assocs($sql);
 				if(!$out) $this->warning[] = str_replace("{{NAME}}", $name, lang::lesson_empty);
 			} catch(Exception $e) {
 				$this->error[] = str_replace("{{NAME}}", $name, lang::term_list_could_not_be_obtained);

@@ -11,6 +11,10 @@
                 <?tpl end ?>
                 </select>
             </div>
+            <div>
+              <input type="checkbox" id="invert" name="invert" value="1" />
+              <label for="invert">{{$LANG['invert']}}</label>
+            </div>
 
             <h3>{{$LANG['order']}}</h3>
             <div>

@@ -23,6 +23,7 @@ class lang {
     const term_accusative_plural = "slovíček";
     const examination = "Zkoušení";
     const exam_lesson = "Lekce ke zkoušení";
+    const invert = "Zkoušet z českých překladů";
     const order = "Pořadí";
     const random = "Náhodně";
     const sequence = "Popořadě";

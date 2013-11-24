@@ -4,7 +4,7 @@
 		const TABLE_EXAM_MISTAKES = "exam_mistakes";
 		const TABLE_EXAM_RESULTS = "exam_results";
 		const COL_TERM = "term";
-        const COL_ORDER = "order";
+    const COL_ORDER = "order";
 		const COL_CYCLE = "cycle";
 		const COL_HITS = "hits";
 		const COL_MISTAKES = "mistakes";
@@ -39,22 +39,42 @@
 						case "hit": $this->hit(); break;
 					}
 
-					if($term = $this->pick())
-						$tpl->reg("TERM", array(
-							"term" => $term->getTerm(),
-							"id" => $term->getId()), true);
-					else $this->stats();
+					if($term = $this->pick()) {
+					  $term_tpl_map = array(
+              "id" => $term->getId()
+            );
+            
+            // If “invert” is set, use translation as a term and vice versa.
+            if($_POST["invert"] != "1") {
+              $term_tpl_map["term"] = $term->getTerm(); 
+            } else {
+              $term_tpl_map["term"] = $term->getTranslation(); 
+            }
+            
+						$tpl->reg("TERM", $term_tpl_map, true);
+          } else $this->stats();
 				}
 				
 				// Reveal the complete term (with an answer).
 				if(isset($_POST["reveal"])) {
 					$term = new Term($_POST["term"]);
-					$tpl->reg("TERM", array(
-						"term" => $term->getTerm(),
-						"metadata" => $term->getMetadata(),
-						"translation" => $term->getTranslation(),
-						"comment" => $term->getComment(),
-						"id" => $term->getId()), true);
+          
+          $term_tpl_map = array(
+            "metadata" => $term->getMetadata(),
+            "comment" => $term->getComment(),
+            "id" => $term->getId()
+          );
+
+          // If “invert” is set, use translation as a term and vice versa.
+          if($_POST["invert"] != "1") {
+            $term_tpl_map["term"] = $term->getTerm(); 
+            $term_tpl_map["translation"] = $term->getTranslation();
+          } else {
+            $term_tpl_map["term"] = $term->getTranslation(); 
+            $term_tpl_map["translation"] = $term->getTerm();
+          }
+          
+					$tpl->reg("TERM", $term_tpl_map, true);
 					$tpl->reg("REVEAL", true, true);
 				}
 				
@@ -78,13 +98,14 @@
 			if(!isset($term) || !$term) $tpl->reg("LESSONS", $lessoner->get_list(), true); // No need to load the list if it wouldn’t be displayed.
             $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
             $tpl->reg("TITLE", str_replace("{{LESSON}}", $lesson_name, lang::exam_title), true);
+      $tpl->reg("INVERT", $_POST["invert"], true);
 			$tpl->load("exam.tpl");
 			$tpl->execute();
 			return(parent::out($tpl->out()));
 		}
 		
 		// Fills the table with terms of a given lesson.
-		function fill($lesson, $random = true) {
+		function fill($lesson, $random = true, $invert = false) {
 			// Remove data from the last exam in case there are some left.
 			$this->db->truncate(self::TABLE_EXAM_TERMS);
 			$this->db->truncate(self::TABLE_EXAM_MISTAKES);

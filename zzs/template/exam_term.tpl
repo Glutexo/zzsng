@@ -17,6 +17,7 @@
 				<tr><td colspan="2" class="submit">
 					<?tpl if just $LESSON_A ?><input type="hidden" name="lesson" value="{{$LESSON_A['id']}}" /><?tpl end ?>
 					<input type="hidden" name="term" value="{{$TERM['id']}}" />
+					<input type="hidden" name="invert" value="{{INVERT}}" />
 					<?tpl if just $REVEAL ?>
 						<input type="submit" accesskey="z" name="next[hit]" value="{{$LANG['knew']}}" />
 						<input type="submit" accesskey="x" name="next[mistake]" value="{{$LANG['did_not_know']}}" />
