@@ -93,3 +93,12 @@ But if anybody wants to fix some bugs or implement new features to this legacy v
 UPDATE: An exception has been made to the no-new-features statement. I needed an option to change order of terms in a lesson, so this option has been added.
 
 UPDATE 2: It is now possible to enable “reverse” examination: Instead of the term being displayed in a foreign language and then revealed its Czech translation, the translation is presented. Revaling the missing data diplays the original term in the foreign language.
+
+# New features – ideas #
+
+* Tree lesson hierarchy, languages being the top level.
+* Recoverable exam session.
+* Undo after clicking marking a term as known/unknown.
+* Direct term/translation/etc. editting from examination.
+* Multi-user environment with public/private lessons.
+* Statistics.  
