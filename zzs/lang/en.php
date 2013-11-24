@@ -23,7 +23,7 @@ class lang {
     const term_accusative_plural = "terms";
     const examination = "Examination";
     const exam_lesson = "Lesson to be tested.";
-    const invert = "Base exam on Czech translations";
+    const invert = "Base exam on translations";
     const order = "Order";
     const random = "Random";
     const sequence = "Sequence";

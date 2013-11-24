@@ -54,6 +54,8 @@ There is also an option to choose whether the terms from the lesson(s) shall be 
 
 After hitting the _Start exam_ button, a first word from a chosen lesson is shown to the user, without its metadata, translation and comment. This is the time for thinking about what the translation of the word is, what it means, how is it pronounced etc. After thinking that out, writing that on a piece of paper or to a separate text file, it is possible to reveal all the info about the word: That means its translation, metadata and comment. When this information is checked, the buttons _I knew it_ and _I didn’t know it_ can be used to tell the program the state of our knowledge.
 
+By default, the foreign language word is displayed and it’s translation stays hidden, until the “Reveal” button is clicked. This can be changed by checking the “base on translations” checkbox right below the lesson list. If checked, translations are displayed in the first place and the original term is shown, after using the “Reveal” button.
+
 When the last word from the lesson is presented, a new round begins only with the terms that have been marked as _not known_. This cycle repeats until all the words are guessed correctly. After finnishing the last iteration, a message appears saying how many words were correct in the very first part of the exam, how many are they in total and a percentual representation of the success rate.
 
 The program does not provide any mechanism to check up the user’s guess with the data in the database, because there is no way to automatically tell whether the user really knew it or not: The meaning of the word consist not only from its right spelling and for example even guessing a synonym can be still considered correct. So it’s up to the user himself to decide which words he  need to see once again and which is he already confident with.
@@ -89,3 +91,5 @@ The last new features added only for the purpose of deployment to [Heroku](http:
 But if anybody wants to fix some bugs or implement new features to this legacy version, feel free to submit your patches.
 
 UPDATE: An exception has been made to the no-new-features statement. I needed an option to change order of terms in a lesson, so this option has been added.
+
+UPDATE 2: It is now possible to enable “reverse” examination: Instead of the term being displayed in a foreign language and then revealed its Czech translation, the translation is presented. Revaling the missing data diplays the original term in the foreign language.
