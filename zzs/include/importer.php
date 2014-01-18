@@ -66,7 +66,7 @@
 		}
 
 		// Composes the page block with an import form.
-		function out() {
+		function out($void = "") {
 			if(isset($_POST["import"])) {
 				try {
                     if(isset($_POST["data"])) {

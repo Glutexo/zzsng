@@ -10,8 +10,13 @@
 			else $application->{config::SECTION_FUNCTION_PREFIX . config::DEFAULT_FUNCTION_NAME}();
 		}
 		
-		function out($application) {
-			return(parent::out($application->out));
+		function out($application = "") {
+			if(is_object($application)) {
+				$out = $application->out;
+			} else {
+				$out = $application;
+			}
+			return parent::out($out);
 		}
 		
 	}

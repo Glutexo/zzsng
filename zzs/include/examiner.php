@@ -18,7 +18,7 @@
 		}
 		
 		// Composes a page block with a lesson selection form for the exam beginning.
-		function out() {
+		function out($void = "") {
 			$tpl = new Template;
 			
 			try {				
