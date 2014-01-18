@@ -97,8 +97,12 @@
 			$lessoner = new Lessoner;
 			if(!isset($term) || !$term) $tpl->reg("LESSONS", $lessoner->get_list(), true); // No need to load the list if it wouldn’t be displayed.
             $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
-            $tpl->reg("TITLE", str_replace("{{LESSON}}", $lesson_name, lang::exam_title), true);
-      $tpl->reg("INVERT", $_POST["invert"], true);
+            if(isset($lesson_name)) {
+				$tpl->reg("TITLE", str_replace("{{LESSON}}", $lesson_name, lang::exam_title), true);
+			}
+			if(array_key_exists("invert", $_POST)) {
+				$tpl->reg("INVERT", $_POST["invert"], true);
+			}
 			$tpl->load("exam.tpl");
 			$tpl->execute();
 			return(parent::out($tpl->out()));

@@ -74,7 +74,7 @@
 					GROUP BY l.id
 					ORDER BY l.jmeno,l.jazyk"))) */
 // Cleaner, but slow:
-                if($_REQUEST["section"] == "lessons" && !empty($_SESSION["language"])) {
+                if(!empty($_REQUEST["section"]) && $_REQUEST["section"] == "lessons" && !empty($_SESSION["language"])) {
                     $where = "WHERE " . Lesson::COL_LANGUAGE . " = " . $_SESSION["language"];
                 } else $where = "";
                 $query = "SELECT * FROM " . Lesson::TABLE_LESSONS . " " . $where . " ORDER BY " . Lesson::COL_NAME;
