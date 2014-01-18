@@ -14,7 +14,7 @@
         var $lesson;
 
         // Composes a page block regarding the term management.
-		function out() {
+		function out($void = "") {
 			$tpl = new Template;
 			
 			try {

@@ -7,6 +7,8 @@
 	}
 
 	class Application implements iApplication {
+		public $out = "";
+
 		/* *** Decider sections. *** */
 		
 		public function section_default($selected_section = false) {

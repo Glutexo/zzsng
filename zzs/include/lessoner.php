@@ -3,7 +3,7 @@
         var $lesson;
 		
 		// Output.
-		function out() {
+		function out($void = "") {
 			$tpl = new Template;
 			
 			try {

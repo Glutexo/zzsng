@@ -589,7 +589,7 @@ function reg($key, $val, $nonvar = false){
 		$nm = $val;
 	}
 	/* If we're overwriting variable created by reg(), free it! */
-	if(ereg("^".TemplateMagicValue, (isset($this->variables[$key]) ? $this->variables[$key] : null))){
+	if(preg_match("/^".preg_quote(TemplateMagicValue, "/")."/", (isset($this->variables[$key]) ? $this->variables[$key] : null))){
 		unset($GLOBALS[$this->variables[$key]]);
 	}
 	/* Finally, register! :) */
