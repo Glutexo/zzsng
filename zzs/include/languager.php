@@ -3,7 +3,7 @@
         var $language;
 
 		// Composes a page block regarding to the language management.
-		function out() {
+		function out($void = "") {
 			$tpl = new Template;
 
 			try {
