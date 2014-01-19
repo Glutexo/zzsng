@@ -74,9 +74,24 @@
 					GROUP BY l.id
 					ORDER BY l.jmeno,l.jazyk"))) */
 // Cleaner, but slow:
+				$conds = array();
                 if(!empty($_REQUEST["section"]) && $_REQUEST["section"] == "lessons" && !empty($_SESSION["language"])) {
-                    $where = "WHERE " . Lesson::COL_LANGUAGE . " = " . $_SESSION["language"];
-                } else $where = "";
+					$conds[] = Lesson::COL_LANGUAGE . " = " . $_SESSION["language"];
+                }
+
+				if(!empty($_SESSION[master_config::APPLICATION]['active_user'])) {
+					$user_id = intval($_SESSION[master_config::APPLICATION]['active_user']);
+					$conds[] = "user_id = $user_id";
+				} else {
+					$conds[] = "FALSE";
+				}
+
+
+				$where = "";
+				if($conds) {
+					$where = "WHERE (".implode(") AND (",$conds).")";
+				}
+
                 $query = "SELECT * FROM " . Lesson::TABLE_LESSONS . " " . $where . " ORDER BY " . Lesson::COL_NAME;
 				if($out = $this->db->fetch_assocs($query)) {
 					foreach($out as $k => $lesson) {

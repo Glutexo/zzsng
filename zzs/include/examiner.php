@@ -28,7 +28,7 @@
 						$this->fill($_POST["lesson"], $_POST["random"] == "1"); // Start an exam.
 					}
 					
-					if($_POST["next"]) {
+					if(!empty($_POST["next"])) {
 						foreach($_POST["next"] as $k => $v) {
 							$next = $k;
 						}
@@ -45,7 +45,7 @@
             );
             
             // If “invert” is set, use translation as a term and vice versa.
-            if($_POST["invert"] != "1") {
+            if(empty($_POST["invert"])) {
               $term_tpl_map["term"] = $term->getTerm(); 
             } else {
               $term_tpl_map["term"] = $term->getTranslation(); 

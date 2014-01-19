@@ -85,7 +85,11 @@
 		function get_list() {
 			$name = $this->lesson->getName();
 			try {
-                switch($_SESSION["sort"]) {
+				$sort = "";
+				if(!empty($_SESSION["sort"])) {
+					$sort = $_SESSION["sort"];
+				}
+                switch($sort) {
                     case "order":
                         $orderby = $this->db->escape_column(Term::COL_ORDER) . " ASC";
                         break;
@@ -136,16 +140,18 @@
 				$this->term->setTranslation($new_translation);
 				$this->term->setComment($new_comment);
 
-				if($duplicates = $this->find_duplicates($term)) foreach($duplicates as $duplicate) {
-					$tpl = new Template();
-					$tpl->reg('LESSON_ID', $duplicate[self::DUP_LESSON_ID], true);
-					$tpl->reg('LESSON_NAME', $duplicate[self::DUP_LESSON_NAME], true);
-					$tpl->reg('TERM_ID', $duplicate[self::DUP_TERM_ID], true);
-                    $tpl->reg('LANG', AdminFunctions::lang_to_array(), true);
-                    $tpl->reg('MESSAGE', str_replace("{{LESSON}}", $duplicate[self::DUP_LESSON_NAME], lang::duplicate_found), true);
-					$tpl->load(self::TPL_DUPLICATE_FOUND);
-					$tpl->execute();
-					$this->warning[] = $tpl->out();
+				if(!empty($term) && $duplicates = $this->find_duplicates($term)) {
+					foreach($duplicates as $duplicate) {
+						$tpl = new Template();
+						$tpl->reg('LESSON_ID', $duplicate[self::DUP_LESSON_ID], true);
+						$tpl->reg('LESSON_NAME', $duplicate[self::DUP_LESSON_NAME], true);
+						$tpl->reg('TERM_ID', $duplicate[self::DUP_TERM_ID], true);
+						$tpl->reg('LANG', AdminFunctions::lang_to_array(), true);
+						$tpl->reg('MESSAGE', str_replace("{{LESSON}}", $duplicate[self::DUP_LESSON_NAME], lang::duplicate_found), true);
+						$tpl->load(self::TPL_DUPLICATE_FOUND);
+						$tpl->execute();
+						$this->warning[] = $tpl->out();
+					}
 				}
 
 				$this->term->SAVE();
