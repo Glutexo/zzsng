@@ -4,10 +4,16 @@
 	
 	// Set up some global settings specific for this application.
 	class config extends master_config {
+		const DEMO_USER_ID = 2;
 	}
 
 	class Application implements iApplication {
 		public $out = "";
+
+		public function __construct() {
+			$login = new Login;
+			$login->ensure();
+		}
 
 		/* *** Decider sections. *** */
 		

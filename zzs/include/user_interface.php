@@ -22,10 +22,14 @@
 		/* Inserts header. */
 		function out_head() {
 			$out = $this->xmlhead;
-		
+
+			$login_obj = new Login;
+			$active_user_login = $login_obj->get_active_user_login();
+
 			$tpl = new Template;
 			$tpl->reg("PROJECT_NAME", lang::project_name, true);
 			$tpl->reg("TEMPLATE_DIR", config::APPLICATION . config::TEMPLATE_DIR, true);
+			$tpl->reg("LOGIN", $active_user_login, true);
 			$tpl->load("header.tpl");
 			$tpl->execute();
 			$out .= $tpl->out();

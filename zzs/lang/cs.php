@@ -152,5 +152,9 @@ class lang {
     // Setup.
     const structure_import_success = "Import databázové struktury proběhl úspěšně.";
     const structure_import_error = "Import databázové struktury se nezdařil";
+
+	// Login.
+	const user_id_not_provided = "Nepředáno ID uživatele.";
+	const invalid_user_id = "Neplatné ID uživatele.";
 }
 ?>

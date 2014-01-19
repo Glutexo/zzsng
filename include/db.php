@@ -85,11 +85,11 @@
 		function query($q) {
             switch(DbConfig::TYPE) {
                 case 'mysql':
-                    $res = mysql_query($q, $this->link);
+                    $res = @mysql_query($q, $this->link);
                     if(mysql_errno()) $error = mysql_error();
                     break;
                 case 'pgsql':
-                    $res = pg_query($this->link, $q);
+                    $res = @pg_query($this->link, $q);
                     $error = pg_last_error($this->link);
                     break;
             }
