@@ -62,6 +62,13 @@ class Login {
 		$this->login_with_id(config::DEMO_USER_ID);
 	}
 
+	public function get_active_user_id() {
+		if(empty($_SESSION[master_config::APPLICATION]) || empty($_SESSION[master_config::APPLICATION]['active_user'])) {
+			return null;
+		}
+		return $_SESSION[master_config::APPLICATION]['active_user'];
+	}
+
 	/**
 	 * Returns a login (user name) of the active user. Null if there is no
 	 * active user, but that should never happen.
