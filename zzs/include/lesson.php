@@ -6,6 +6,7 @@
 		const COL_LANGUAGE = "language";
 		const COL_CREATED = "created";
 		const COL_LAST_CHANGE = "last_change";
+		const COL_USER_ID = "user_id";
 
         var $id = null;
 		var $name = "";
@@ -91,7 +92,9 @@
 			}
 			else { // Add.
 				$time = AdminFunctions::dbtime();
+				$login = new Login;
 				$this->db->insert(self::TABLE_LESSONS, array(
+					self::COL_USER_ID => $login->get_active_user_id(),
 					self::COL_NAME => $this->name,
 					self::COL_LANGUAGE => $this->language,
 					self::COL_CREATED => $time,
