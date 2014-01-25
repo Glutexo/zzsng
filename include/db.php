@@ -200,6 +200,23 @@
             return $escaped;
         }
 
+		function escape_string($s) {
+			return "'".$this->escape($s)."'";
+		}
+
+		function list_tables() {
+			if(DbConfig::TYPE === 'mysql') {
+				throw new Exception(lang::NOT_SUPPORTED_ON_MYSQL);
+			}
+
+			$table = $this->escape_column("information_schema").".".$this->escape_column("tables");
+			$cond = $this->escape_column("table_schema")." = ".$this->escape_string("public");
+			$cols = array("table_name");
+
+			$result = $this->select_where($table, $cond, $cols);
+			return $result->fetch_single_fields();
+		}
+
 		function __destruct() {
 //			mysql_close($this->link);
 		}
