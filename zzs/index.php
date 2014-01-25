@@ -9,7 +9,7 @@
 		const DEFAULT_SECTION_NAME = "exam";
 	}
 
-	class Application implements iApplication {
+	class Application {
 		public $out = "";
 
 		public function __construct() {
