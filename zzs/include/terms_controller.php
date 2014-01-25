@@ -1,5 +1,5 @@
 <?php
-	class Termer extends Doer {
+	class TermsController extends Doer {
 	
 		const DUP_LESSON_ID = 0;
 		const DUP_LESSON_NAME = 1;

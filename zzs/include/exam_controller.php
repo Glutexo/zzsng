@@ -1,5 +1,5 @@
 <?php
-	class Examiner extends Doer {
+	class ExamController extends Doer {
 		const TABLE_EXAM_TERMS = "exam_terms";
 		const TABLE_EXAM_MISTAKES = "exam_mistakes";
 		const TABLE_EXAM_RESULTS = "exam_results";
@@ -94,7 +94,7 @@
 				$this->error[] = lang::action_failed . ": " . $e->getMessage();
 			}
 			
-			$lessoner = new Lessoner;
+			$lessoner = new LessonsController;
 			if(!isset($term) || !$term) $tpl->reg("LESSONS", $lessoner->get_list(), true); // No need to load the list if it wouldn’t be displayed.
             $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
             if(isset($lesson_name)) {

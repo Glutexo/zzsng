@@ -1,5 +1,5 @@
 <?php
-class Setup {
+class SetupController {
     const FILENAME = "sql/structure.sql";
 
     function __construct() {

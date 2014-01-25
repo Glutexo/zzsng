@@ -1,5 +1,5 @@
 <?php
-	class Lessoner extends Doer {
+	class LessonsController extends Doer {
         var $lesson;
 		
 		// Output.
@@ -51,7 +51,7 @@
                 $_SESSION["language"] = $_GET["language"];
             }
             
-			$languager = new Languager;
+			$languager = new LanguagesController;
 			
 			$tpl->reg("LESSONS", $this->get_list(), true);
 			$tpl->reg("LANGUAGES", $languager->get_list(), true);

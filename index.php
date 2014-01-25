@@ -7,7 +7,7 @@
         const DEFAULT_EXTENSION = ".php";
 	
 		const SECTION_FUNCTION_PREFIX = "section_";
-		const DEFAULT_FUNCTION_NAME = "default";
+		const DEFAULT_SECTION_NAME = "default";
         const DEFAULT_LANGUAGE = "cs";
 
 		const APPLICATION = "zzs";

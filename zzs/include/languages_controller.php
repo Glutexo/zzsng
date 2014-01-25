@@ -1,5 +1,5 @@
 <?php
-	class Languager extends Doer {
+	class LanguagesController extends Doer {
         var $language;
 
 		// Composes a page block regarding to the language management.
