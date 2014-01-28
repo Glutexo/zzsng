@@ -104,7 +104,7 @@
 				} else 
 					$this->warning[] = lang::no_lesson_exists;
 			} catch(Exception $e) {
-				$this->error[] = lang::lesson_list_could_not_be_obtained . ": " . $e->getMessage;
+				$this->error[] = lang::lesson_list_could_not_be_obtained . ": " . $e->getMessage();
 				$out = array();
 			}
 			return($out);
