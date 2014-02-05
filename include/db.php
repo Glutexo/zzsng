@@ -74,7 +74,7 @@
                 // Hodnoty
                 list($type, $val) = $v;
                 if($type === 'sql') $q .= $val.",";
-                else $q .= "'" . addslashes($val) . "',";
+                else $q .= $this->escape_string($val) . ",";
 			}
 			$q = substr($q, 0, -1) . ")";
 
@@ -146,22 +146,44 @@
 		}
 		
 		// Finds records in a table according to the given conditions and returns the result.
-		function select_where($table, $cond = "TRUE", $sloupce = "*", $orderby = "", $limit = "") {
-			if(is_array($sloupce)) $sloupce = implode(",", $sloupce);
+		function select_where($table, $cond = "TRUE", $columns = "*", $orderby = "", $limit = "", $offset = "") {
+			if(is_array($columns)) $columns = implode(",", $columns);
 			if(is_array($cond)) $cond = implode(" AND ", $cond);
 			if(!$cond) $cond = "TRUE";
-			if(!$sloupce) $sloupce = "*";
+			if(!$columns) $columns = "*";
+
 			if($orderby) {
 				$orderby_suffix = " ORDER BY ";
 				(is_array($orderby))?
 					$orderby_suffix .= implode(",", $orderby):
 					$orderby_suffix .= $orderby;
-			} else $orderby_suffix = "";
-            if($limit) {
+			} else {
+				$orderby_suffix = "";
+			}
+
+			if($limit) {
                 $limit_suffix = " LIMIT $limit";
-            } else $limit_suffix = "";
-			
-			return($this->query("SELECT $sloupce FROM $table WHERE $cond" . $orderby_suffix . $limit_suffix));
+            } else {
+				$limit_suffix = "";
+			}
+
+			if($offset) {
+				if(DbConfig::TYPE === "mysql") {
+					throw new Exception(lang::NOT_SUPPORTED_ON_MYSQL);
+				}
+				$offset_suffix = " OFFSET $offset";
+			} else {
+				$offset_suffix = "";
+			}
+
+			$query = "SELECT $columns";
+			$query .= " FROM $table";
+			$query .= " WHERE $cond";
+			$query .= $orderby_suffix;
+			$query .= $limit_suffix;
+			$query .= $offset_suffix;
+
+			return $this->query($query);
 		}
 		
 		// Finds record in the table according to the ID and returns the result.
@@ -199,6 +221,45 @@
 
             return $escaped;
         }
+
+		function escape_string($s) {
+			return "'".$this->escape($s)."'";
+		}
+
+		function list_tables() {
+			if(DbConfig::TYPE === 'mysql') {
+				throw new Exception(lang::NOT_SUPPORTED_ON_MYSQL);
+			}
+
+			$table = $this->escape_column("information_schema").".".$this->escape_column("tables");
+			$cond = $this->escape_column("table_schema")." = ".$this->escape_string("public");
+			$cols = array("table_name");
+
+			$result = $this->select_where($table, $cond, $cols);
+			return $result->fetch_single_fields();
+		}
+
+		public function create_inherited_table($new_table_name, $source_table_name) {
+			if(DbConfig::TYPE !== 'pgsql') {
+				throw new Exception(lang::NOT_SUPPORTED_ON_MYSQL);
+			}
+
+			$new_table_name_escaped = $this->db->escape_column($new_table_name);
+			$source_table_name_escaped = $this->db->escape_column($source_table_name);
+
+			$sql = <<<"EOQ"
+CREATE TABLE $new_table_name_escaped (
+	LIKE $source_table_name_escaped
+	INCLUDING DEFAULTS
+	INCLUDING CONSTRAINTS
+	INCLUDING INDEXES
+	INCLUDING STORAGE
+	INCLUDING COMMENTS
+) INHERITS ($source_table_name_escaped)
+EOQ;
+			$this->db->query($sql);
+			return "";
+		}
 
 		function __destruct() {
 //			mysql_close($this->link);
