@@ -55,7 +55,7 @@
         }
 		
 		// Inserts new record with given values to the table.
-		function insert($table, $pairs, $sql_pairs = array()) {
+		public function insert($table, $pairs, $sql_pairs = array()) {
 			if(!is_array($pairs)) throw new Exception(master_lang::value_pairs_must_be_array);
             if(!is_array($sql_pairs)) throw new Exception(master_lang::sql_pairs_must_be_array);
 
@@ -65,6 +65,8 @@
                 $vals[$k] = array('value', $v);
             }
             foreach($sql_pairs as $k => $v) $vals[$k] = array('sql', $v);
+
+			$table = $this->get_insert_table($table);
 
 			// Compose the query.
 			$q = "INSERT INTO $table (";
@@ -156,6 +158,12 @@
 			if(is_array($columns)) $columns = implode(",", $columns);
 			if(is_array($cond)) $cond = implode(" AND ", $cond);
 			if(!$cond) $cond = "TRUE";
+			if(is_array($cond)) {
+				array_walk($cond, function(&$item) {
+					$item = "($item)";
+				});
+				$cond = implode(" AND ", $cond);
+			}
 			if(!$columns) $columns = "*";
 
 			if($orderby) {
@@ -238,17 +246,89 @@
 			return "'".$this->escape($s)."'";
 		}
 
-		function list_tables() {
+		public function list_tables($conds = array()) {
 			if(DbConfig::TYPE === 'mysql') {
 				throw new Exception(lang::NOT_SUPPORTED_ON_MYSQL);
 			}
 
-			$table = $this->escape_column("information_schema").".".$this->escape_column("tables");
-			$cond = $this->escape_column("table_schema")." = ".$this->escape_string("public");
-			$cols = array("table_name");
+			if(!is_array($conds)) {
+				$conds = array($conds);
+			}
 
-			$result = $this->select_where($table, $cond, $cols);
+			$table = $this->escape_column("information_schema").".".$this->escape_column("tables");
+			$conds[] = $this->escape_column("table_schema")." = ".$this->escape_string("public");
+			$cols = array("table_name");
+			$orderby = new DbObject("table_name");
+
+			$result = $this->select_where($table, $conds, $cols, $orderby);
 			return $result->fetch_single_fields();
+		}
+
+		/**
+		 * Gets a list of all tables inherited from the given
+		 * one. E. g. if a table name "table" is given, a list
+		 * like ["table 1", "table 2"] may be returned.
+		 *
+		 * The function assumes the naming convention that
+		 * all inherited tables have a name of their parent
+		 * followed by a single space and a number.
+		 *
+		 * The list is sorted in an ascending order by the
+		 * number.
+		 *
+		 * @param $table
+		 * @return array
+		 */
+		public function list_inherited_tables($table) {
+			$table_list = $this->list_tables();
+			if(is_a($table, "DbObject")) {
+				$table = clone $table;
+				$table->escape = false;
+			}
+			$table_list = array_filter($table_list, function($item) use($table) {
+				$table = preg_quote($table, "/");
+				return preg_match("/^$table \\d+$/", $item);
+			});
+
+			$db = $this;
+			usort($table_list, function($a, $b) use($db) {
+				$a_num = $db->get_table_number($a);
+				$b_num = $db->get_table_number($b);
+				if($a_num > $b_num) {
+					return 1;
+				} elseif($a_num < $b_num) {
+					return -1;
+				} elseif($a_num == $b_num) {
+					return 0;
+				} else {
+					throw new Exception(master_lang::comparison_error);
+				}
+			});
+
+			return $table_list;
+		}
+
+		public function get_table_number($table) {
+			if(is_a($table, "DbObject")) {
+				$table = clone $table;
+				$table->escape = false;
+			}
+
+			if(preg_match("/ (\\d+)\$/", $table, $match)) {
+				return intval($match[1]);
+			}
+
+			return "";
+		}
+
+		public function row_count($table) {
+			if(!is_a($table, "DbObject")) {
+				$table = new DbObject($table);
+			}
+
+			$result = $this->select_where($table, "TRUE", "count(*)");
+			$count = $result->fetch_single_field();
+			return intval($count);
 		}
 
 		function get_primary_key($table) {
@@ -256,6 +336,10 @@
 				throw new Exception(lang::NOT_SUPPORTED_ON_MYSQL);
 			}
 
+			if(is_a($table, 'DbObject')) {
+				$table = clone $table;
+				$table->escape = false;
+			}
 			$table_escaped = $this->escape_string($table);
 
 			$sql = <<<"EOQ"
@@ -263,11 +347,8 @@
 				FROM "information_schema"."key_column_usage" AS "kcu"
 					JOIN "information_schema"."table_constraints" AS "tc"
 						ON "tc"."constraint_name" = "kcu"."constraint_name"
-					JOIN "information_schema"."columns" AS "c"
-						ON "c"."column_name" = "kcu"."column_name"
-							AND "c"."table_name" = "kcu"."table_name"
 				WHERE "tc"."constraint_type" = 'PRIMARY KEY'
-					AND "kcu"."table_name" like $table_escaped
+					AND "kcu"."table_name" = $table_escaped
 EOQ;
 			$result = $this->query($sql);
 			$pk_name = $result->fetch_single_field();
@@ -313,7 +394,10 @@ EOQ;
 		 * @param $table_name
 		 * @param $row_limit
 		 */
-		public function split_table($parent_table_name, $row_limit) {
+		private function split_table($parent_table_name) {
+			if(!defined('DbConfig::ROW_LIMIT')) {
+				throw new Exception(master_lang::no_row_limit_set);
+			}
 			$child_table = $parent_table = new DbObject($parent_table_name);
 			$pk = $this->get_primary_key($parent_table_name);
 
@@ -324,7 +408,7 @@ EOQ;
 			while($row = $result_all_rows->fetch_assoc()) {
 				// A new table needs to be created.
 				$first_record = $rows_inserted == 0;
-				$limit_reached = $rows_inserted == $row_limit;
+				$limit_reached = $rows_inserted == DbConfig::ROW_LIMIT;
 				if($first_record || $limit_reached) {
 					if($limit_reached) {
 						$child_table_number++;
@@ -348,9 +432,56 @@ EOQ;
 			return;
 		}
 
+		/**
+		 * Figures out which table to insert a new row into. Figures
+		 * out, whether the table is a split table and if so, which
+		 * partition is the last. Then it checks whether the last
+		 * partitions has enough space for another row to be inserted.
+		 * If not it creates a new partition.
+		 *
+		 * Would be slow on massive inserts, because no caching is
+		 * done.
+		 *
+		 * @param $table
+		 */
+		private function get_insert_table($table) {
+			$table_list = $this->list_inherited_tables($table);
+			if(!$table_list) {
+				return $table;
+			}
+			list($last_table) = array_slice($table_list, -1);
+
+			$last_table = new DbObject($last_table);
+			if(!defined("DbConfig::ROW_LIMIT")) {
+				// If the row limit disappeard, let’s insert simply
+				// to the last table.
+				return $last_table;
+			}
+
+			$count = $this->row_count($last_table);
+			if($count < DbConfig::ROW_LIMIT) {
+				return $last_table;
+			}
+
+			$table_num = $this->get_table_number($last_table);
+			if(!$table_num) {
+				return $table;
+			}
+			$table_num++;
+
+			$table_name = $table;
+			if(is_a($table_name, "DbObject")) {
+				$table_name = $table->expression;
+			}
+			$new_table = new DbObject("$table_name $table_num");
+			$this->create_inherited_table($new_table, $table);
+
+			return $new_table;
+		}
+
 		function __destruct() {
 //			mysql_close($this->link);
 		}
-		
+
 	}
 ?>
