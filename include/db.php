@@ -1,5 +1,7 @@
 <?php
 	class Db {
+		private $link;
+
 		function __construct() {
             switch(DbConfig::TYPE) {
                 case 'mysql':
@@ -59,7 +61,7 @@
 
             $vals = array();
             foreach($pairs as $k => $v) {
-                if(array_key_exists($k, $sql_pairs)) throw new Exception(str_replace("{{KEY}}", $k, lang::pair_collision));
+                if(array_key_exists($k, $sql_pairs)) throw new Exception(str_replace("{{KEY}}", $k, master_lang::pair_collision));
                 $vals[$k] = array('value', $v);
             }
             foreach($sql_pairs as $k => $v) $vals[$k] = array('sql', $v);
@@ -83,6 +85,8 @@
 		
 		// Runs a query and returns its result as an object.
 		function query($q) {
+			$res = $error = null;
+
             switch(DbConfig::TYPE) {
                 case 'mysql':
                     $res = @mysql_query($q, $this->link);
@@ -94,7 +98,7 @@
                     break;
             }
 
-            if(!empty($error)) {
+            if(!empty($error) || !$res) {
                 throw new Exception(strtr(master_lang::query_failed, array(
                     "{{ERROR}}" => $error,
                     "{{QUERY}}" => $q
@@ -124,6 +128,7 @@
 		function delete_where($table, $cond = "TRUE") {
 			if(!$cond) $cond = "TRUE";
 			if(is_array($cond)) $cond = implode(" AND ", $cond);
+
 			return($this->query("DELETE FROM $table WHERE $cond"));
 		}
 
@@ -138,13 +143,14 @@
 		}
 		
 		function update_where($table, $cond, $pairs) {
+			$vals = array();
 			foreach($pairs as $k => $v) {
 				$vals[] = $this->escape_column($k) . "='" . addslashes($v) . "'";
 			}
 			if(is_array($cond)) $cond = implode(" AND ", $cond);
 			return($this->query("UPDATE $table SET " . implode(",", $vals) . " WHERE $cond"));
 		}
-		
+
 		// Finds records in a table according to the given conditions and returns the result.
 		function select_where($table, $cond = "TRUE", $columns = "*", $orderby = "", $limit = "", $offset = "") {
 			if(is_array($columns)) $columns = implode(",", $columns);
@@ -198,6 +204,7 @@
 		}
 		
 		function escape($s) {
+			$escaped = null;
             switch(DbConfig::TYPE) {
                 case 'mysql':
                     $escaped = mysql_real_escape_string($s);
@@ -205,11 +212,14 @@
                 case 'pgsql':
                     $escaped = pg_escape_string($this->link, $s);
                     break;
+				default:
+					throw new Exception(master_lang::unsupported_database_type);
             }
 			return($escaped);
 		}
 
         function escape_column($col) {
+			$escaped = null;
             switch(DbConfig::TYPE) {
                 case 'mysql':
                     $escaped = "`$col`";
@@ -217,6 +227,8 @@
                 case 'pgsql':
                     $escaped = "\"$col\"";
                     break;
+				default:
+					throw new Exception(master_lang::unsupported_database_type);
             }
 
             return $escaped;
@@ -239,26 +251,101 @@
 			return $result->fetch_single_fields();
 		}
 
-		public function create_inherited_table($new_table_name, $source_table_name) {
+		function get_primary_key($table) {
+			if(DbConfig::TYPE === 'mysql') {
+				throw new Exception(lang::NOT_SUPPORTED_ON_MYSQL);
+			}
+
+			$table_escaped = $this->escape_string($table);
+
+			$sql = <<<"EOQ"
+				SELECT "kcu"."column_name"
+				FROM "information_schema"."key_column_usage" AS "kcu"
+					JOIN "information_schema"."table_constraints" AS "tc"
+						ON "tc"."constraint_name" = "kcu"."constraint_name"
+					JOIN "information_schema"."columns" AS "c"
+						ON "c"."column_name" = "kcu"."column_name"
+							AND "c"."table_name" = "kcu"."table_name"
+				WHERE "tc"."constraint_type" = 'PRIMARY KEY'
+					AND "kcu"."table_name" like $table_escaped
+EOQ;
+			$result = $this->query($sql);
+			$pk_name = $result->fetch_single_field();
+			$pk = new DbObject($pk_name);
+			return $pk;
+		}
+
+		function table_exists($table) {
+			$tables = $this->list_tables();
+			return in_array($table, $tables);
+		}
+
+		private function create_inherited_table($new_table, $source_table) {
 			if(DbConfig::TYPE !== 'pgsql') {
 				throw new Exception(lang::NOT_SUPPORTED_ON_MYSQL);
 			}
 
-			$new_table_name_escaped = $this->db->escape_column($new_table_name);
-			$source_table_name_escaped = $this->db->escape_column($source_table_name);
-
 			$sql = <<<"EOQ"
-CREATE TABLE $new_table_name_escaped (
-	LIKE $source_table_name_escaped
+CREATE TABLE $new_table (
+	LIKE $source_table
 	INCLUDING DEFAULTS
 	INCLUDING CONSTRAINTS
 	INCLUDING INDEXES
 	INCLUDING STORAGE
 	INCLUDING COMMENTS
-) INHERITS ($source_table_name_escaped)
+) INHERITS ($source_table)
 EOQ;
-			$this->db->query($sql);
+			$this->query($sql);
 			return "";
+		}
+
+		/**
+		 * Creates inherited tables from the given one, each to contain a
+		 * maximum of given number of rows. If a table has 105 records and
+		 * a limit of 10 is given, 11 inherited tables will be created. The
+		 * pattern for new table names is "original_table_name 1" with the
+		 * number being separated with a single space and being increased
+		 * by one for each new table. The first one has number 1.
+		 *
+		 * This function assumes that the table is not split yet and no
+		 * inherited tables exist.
+		 *
+		 * @param $table_name
+		 * @param $row_limit
+		 */
+		public function split_table($parent_table_name, $row_limit) {
+			$child_table = $parent_table = new DbObject($parent_table_name);
+			$pk = $this->get_primary_key($parent_table_name);
+
+			$result_all_rows = $this->select_where($parent_table, "TRUE", "*", $pk);
+
+			$child_table_number = 1;
+			$rows_inserted = 0;
+			while($row = $result_all_rows->fetch_assoc()) {
+				// A new table needs to be created.
+				$first_record = $rows_inserted == 0;
+				$limit_reached = $rows_inserted == $row_limit;
+				if($first_record || $limit_reached) {
+					if($limit_reached) {
+						$child_table_number++;
+						$rows_inserted = 0;
+					}
+
+					$child_table_name = "$parent_table_name $child_table_number";
+					$child_table = new DbObject($child_table_name);
+					$this->create_inherited_table($child_table, $parent_table);
+				}
+
+				// Delete before insert. Insert is into the specific inherited
+				// table, but delete without the ONLY keyword affects not only
+				// the parent table, but the children tables as well.
+				$pk_name = $pk->expression;
+				$this->delete($parent_table, $row[$pk_name]);
+				$this->insert($child_table, $row);
+
+				$rows_inserted++;
+			}
+			return;
 		}
 
 		function __destruct() {
