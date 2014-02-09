@@ -332,11 +332,11 @@
 		}
 
 		function get_primary_key($table) {
-			if(DbConfig::TYPE === 'mysql') {
+			if(DbConfig::TYPE === "mysql") {
 				throw new Exception(lang::NOT_SUPPORTED_ON_MYSQL);
 			}
 
-			if(is_a($table, 'DbObject')) {
+			if(is_a($table, "DbObject")) {
 				$table = clone $table;
 				$table->escape = false;
 			}
@@ -394,12 +394,15 @@ EOQ;
 		 * @param $table_name
 		 * @param $row_limit
 		 */
-		private function split_table($parent_table_name) {
+		public function split_table($parent_table) {
 			if(!defined('DbConfig::ROW_LIMIT')) {
 				throw new Exception(master_lang::no_row_limit_set);
 			}
-			$child_table = $parent_table = new DbObject($parent_table_name);
-			$pk = $this->get_primary_key($parent_table_name);
+			if(!is_a($parent_table, "DbObject")) {
+				$parent_table = new DbObject($parent_table);
+			}
+			$child_table = clone $parent_table;
+			$pk = $this->get_primary_key($parent_table);
 
 			$result_all_rows = $this->select_where($parent_table, "TRUE", "*", $pk);
 
@@ -415,7 +418,7 @@ EOQ;
 						$rows_inserted = 0;
 					}
 
-					$child_table_name = "$parent_table_name $child_table_number";
+					$child_table_name = "$parent_table $child_table_number";
 					$child_table = new DbObject($child_table_name);
 					$this->create_inherited_table($child_table, $parent_table);
 				}

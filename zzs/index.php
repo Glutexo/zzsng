@@ -13,6 +13,8 @@
 		public function __construct() {
 			$login = new Login;
 			$login->ensure();
+
+			DbMigration::migrate();
 		}
 
 		/* *** Decider sections. *** */
