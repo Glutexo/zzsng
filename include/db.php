@@ -321,6 +321,17 @@
 			return "";
 		}
 
+        public function get_max_table_number($table) {
+            $tables = $this->list_inherited_tables($table);
+            $last_table = array_pop($tables);
+
+            if(!is_a($last_table, "DbObject")) {
+                $last_table = new DbObject($last_table);
+            }
+
+            return $this->get_table_number($last_table);
+        }
+
 		public function row_count($table) {
 			if(!is_a($table, "DbObject")) {
 				$table = new DbObject($table);
@@ -411,6 +422,7 @@ EOQ;
 			}
 			$child_table = clone $parent_table;
 			$pk = $this->get_primary_key($parent_table);
+            $pk_name = $pk->expression;
 
 			$result_all_rows = $this->select_where($parent_table, "TRUE", "*", $pk);
 
@@ -435,7 +447,6 @@ EOQ;
 				// Delete before insert. Insert is into the specific inherited
 				// table, but delete without the ONLY keyword affects not only
 				// the parent table, but the children tables as well.
-				$pk_name = $pk->expression;
 				$this->delete($parent_table, $row[$pk_name]);
 				$this->insert($child_table, $row);
 
@@ -443,6 +454,39 @@ EOQ;
 			}
 			return;
 		}
+
+        public function merge_table($parent_table) {
+            if(!is_a($parent_table, "DbObject")) {
+                $parent_table = new DbObject($parent_table);
+            }
+
+            $pk = $this->get_primary_key($parent_table);
+            $pk_name = $pk->expression;
+
+            $tables = $this->list_inherited_tables($parent_table);
+            foreach($tables as $child_table) {
+                if(!is_a($child_table, "DbObject")) {
+                    $child_table = new DbObject($child_table);
+                }
+
+                $rows = $this->select_where($child_table, "TRUE", "*", $pk);
+
+                while($row = $rows->fetch_assoc()) {
+                    $this->delete($child_table, $row[$pk_name]);
+                    $this->insert($parent_table, $row);
+                }
+
+                $this->drop_table($child_table);
+            }
+        }
+
+        public function drop_table($child_table) {
+            if(!is_a($child_table, "DbObject")) {
+                $child_table = new DbObject($child_table);
+            }
+
+            return $this->query("DROP TABLE $child_table");
+        }
 
 		/**
 		 * Figures out which table to insert a new row into. Figures
