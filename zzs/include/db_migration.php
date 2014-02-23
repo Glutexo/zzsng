@@ -10,6 +10,7 @@ class DbMigration {
 		$table = new DbObject("terms");
 		$tables = self::$db->list_inherited_tables($table);
 		if($tables) {
+            die("X");
 			self::$db->merge_table($table);
 		}
 	}

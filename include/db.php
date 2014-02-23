@@ -18,7 +18,7 @@
         function connect() {
             switch(DbConfig::TYPE) {
                 case 'mysql':
-                    $this->link = @mysql_connect(DbConfig::SERVER, DbConfig::USERNAME, DbConfig::PASSWORD);
+                    $this->link = mysql_connect(DbConfig::SERVER, DbConfig::USERNAME, DbConfig::PASSWORD);
                     $error = mysql_error();
                     if(!$error) {
                         $this->db_select();
@@ -33,7 +33,7 @@
                     $con_string .= " password='" . DbConfig::PASSWORD . "'";
                     $con_string .= " options='--client_encoding=" . DbConfig::ENCODING . "'";
 
-                    $this->link = @pg_connect($con_string);
+                    $this->link = pg_connect($con_string);
                     if($this->link) $error = pg_last_error($this->link);
             }
             if(!$this->link) {
