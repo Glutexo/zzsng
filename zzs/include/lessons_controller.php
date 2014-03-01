@@ -1,5 +1,5 @@
 <?php
-	class Lessoner extends Doer {
+	class LessonsController extends Doer {
         var $lesson;
 		
 		// Output.
@@ -51,7 +51,7 @@
                 $_SESSION["language"] = $_GET["language"];
             }
             
-			$languager = new Languager;
+			$languager = new LanguagesController;
 			
 			$tpl->reg("LESSONS", $this->get_list(), true);
 			$tpl->reg("LANGUAGES", $languager->get_list(), true);
@@ -74,9 +74,24 @@
 					GROUP BY l.id
 					ORDER BY l.jmeno,l.jazyk"))) */
 // Cleaner, but slow:
-                if($_REQUEST["section"] == "lessons" && !empty($_SESSION["language"])) {
-                    $where = "WHERE " . Lesson::COL_LANGUAGE . " = " . $_SESSION["language"];
-                } else $where = "";
+				$conds = array();
+                if(!empty($_REQUEST["section"]) && $_REQUEST["section"] == "lessons" && !empty($_SESSION["language"])) {
+					$conds[] = Lesson::COL_LANGUAGE . " = " . $_SESSION["language"];
+                }
+
+				if(!empty($_SESSION[master_config::APPLICATION]['active_user'])) {
+					$user_id = intval($_SESSION[master_config::APPLICATION]['active_user']);
+					$conds[] = "user_id = $user_id";
+				} else {
+					$conds[] = "FALSE";
+				}
+
+
+				$where = "";
+				if($conds) {
+					$where = "WHERE (".implode(") AND (",$conds).")";
+				}
+
                 $query = "SELECT * FROM " . Lesson::TABLE_LESSONS . " " . $where . " ORDER BY " . Lesson::COL_NAME;
 				if($out = $this->db->fetch_assocs($query)) {
 					foreach($out as $k => $lesson) {
@@ -89,7 +104,7 @@
 				} else 
 					$this->warning[] = lang::no_lesson_exists;
 			} catch(Exception $e) {
-				$this->error[] = lang::lesson_list_could_not_be_obtained . ": " . $e->getMessage;
+				$this->error[] = lang::lesson_list_could_not_be_obtained . ": " . $e->getMessage();
 				$out = array();
 			}
 			return($out);

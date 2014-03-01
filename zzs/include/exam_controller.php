@@ -1,10 +1,10 @@
 <?php
-	class Examiner extends Doer {
+	class ExamController extends Doer {
 		const TABLE_EXAM_TERMS = "exam_terms";
 		const TABLE_EXAM_MISTAKES = "exam_mistakes";
 		const TABLE_EXAM_RESULTS = "exam_results";
 		const COL_TERM = "term";
-    const COL_ORDER = "order";
+		const COL_ORDER = "order";
 		const COL_CYCLE = "cycle";
 		const COL_HITS = "hits";
 		const COL_MISTAKES = "mistakes";
@@ -28,7 +28,7 @@
 						$this->fill($_POST["lesson"], $_POST["random"] == "1"); // Start an exam.
 					}
 					
-					if($_POST["next"]) {
+					if(!empty($_POST["next"])) {
 						foreach($_POST["next"] as $k => $v) {
 							$next = $k;
 						}
@@ -45,7 +45,7 @@
             );
             
             // If “invert” is set, use translation as a term and vice versa.
-            if($_POST["invert"] != "1") {
+            if(empty($_POST["invert"])) {
               $term_tpl_map["term"] = $term->getTerm(); 
             } else {
               $term_tpl_map["term"] = $term->getTranslation(); 
@@ -94,11 +94,15 @@
 				$this->error[] = lang::action_failed . ": " . $e->getMessage();
 			}
 			
-			$lessoner = new Lessoner;
+			$lessoner = new LessonsController;
 			if(!isset($term) || !$term) $tpl->reg("LESSONS", $lessoner->get_list(), true); // No need to load the list if it wouldn’t be displayed.
-            $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
-            $tpl->reg("TITLE", str_replace("{{LESSON}}", $lesson_name, lang::exam_title), true);
-      $tpl->reg("INVERT", $_POST["invert"], true);
+			$tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
+            if(isset($lesson_name)) {
+				$tpl->reg("TITLE", str_replace("{{LESSON}}", $lesson_name, lang::exam_title), true);
+			}
+			if(array_key_exists("invert", $_POST)) {
+				$tpl->reg("INVERT", $_POST["invert"], true);
+			}
 			$tpl->load("exam.tpl");
 			$tpl->execute();
 			return(parent::out($tpl->out()));

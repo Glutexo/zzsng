@@ -12,5 +12,6 @@
 	<body>
 		<div id="header">
 			<h1>{{PROJECT_NAME}}</h1>
+			<div id="login">{{LOGIN}}</div>
 		</div>
 <?tpl end ?>

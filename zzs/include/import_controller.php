@@ -1,5 +1,5 @@
 <?php
-	class Importer extends Doer {
+	class ImportController extends Doer {
 		const TERM_DELIMITER = "\n";
 		const COLUMN_DELIMITER = ";";
 		const PSEUDODELIMITER = "#####";
@@ -94,8 +94,8 @@
 			}
 			
             
-			$languager = new Languager;
-            $lessoner = new Lessoner;
+			$languager = new LanguagesController;
+            $lessoner = new LessonsController;
 			
 			$tpl = new Template;
 			$tpl->reg("LANGUAGES", $languager->get_list(), true);

@@ -152,5 +152,12 @@ class lang {
     // Setup.
     const structure_import_success = "Database structure import successful.";
     const structure_import_error = "Database structure import failed";
+
+	// Login.
+	const user_id_not_provided = "User ID not provided.";
+	const invalid_user_id = "Invalid user ID.";
+
+	// Db.
+	const NOT_SUPPORTED_ON_MYSQL = "Not supported on MySQL database.";
 }
 ?>

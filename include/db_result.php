@@ -43,6 +43,7 @@
 		}
 
 		function fetch_single_fields() {
+			$fields = array();
             switch(DbConfig::TYPE) {
                 case 'mysql':
                     while($field = mysql_fetch_row($this->res))
@@ -57,6 +58,7 @@
 		}
 
 		function fetch_rows() {
+			$rows = array();
             switch(DbConfig::TYPE) {
                 case 'mysql':
                     while($row = mysql_fetch_row($this->res))
@@ -71,6 +73,7 @@
 		}
 
 		function fetch_assocs() {
+			$data = array();
 			while($row = $this->fetch_assoc())
 				$data[] = $row;
 
