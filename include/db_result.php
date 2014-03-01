@@ -43,6 +43,7 @@
 		}
 
 		function fetch_single_fields() {
+			$fields = array();
             switch(DbConfig::TYPE) {
                 case 'mysql':
                     while($field = mysql_fetch_row($this->res))

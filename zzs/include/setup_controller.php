@@ -1,5 +1,6 @@
 <?php
-class Setup {
+class SetupController {
+    const FILENAME = "sql/structure.sql";
     private $filename;
 
     function __construct() {
@@ -9,6 +10,8 @@ class Setup {
     }
 
     function import() {
+        $sql = file_get_contents(self::FILENAME);
+        $this->db->query($sql);
         $sql = @file_get_contents($this->filename);
         if(!$sql) throw new Exception(lang::sql_file_read_error);
         $sql($this->db->query($sql));

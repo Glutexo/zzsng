@@ -447,6 +447,7 @@ EOQ;
 				// Delete before insert. Insert is into the specific inherited
 				// table, but delete without the ONLY keyword affects not only
 				// the parent table, but the children tables as well.
+				$pk_name = $pk->expression;
 				$this->delete($parent_table, $row[$pk_name]);
 				$this->insert($child_table, $row);
 
@@ -468,7 +469,6 @@ EOQ;
                 if(!is_a($child_table, "DbObject")) {
                     $child_table = new DbObject($child_table);
                 }
-
                 $rows = $this->select_where($child_table, "TRUE", "*", $pk);
 
                 while($row = $rows->fetch_assoc()) {
