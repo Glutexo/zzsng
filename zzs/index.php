@@ -20,13 +20,6 @@
 
 		/* *** Decider sections. *** */
 		
-		public function section_default($selected_section = false) {
-			$examiner = new Examiner;
-			$this->out .= $examiner->out();
-		}
-
-		/* *** Decider sections. *** */
-		
 		public function section_bulk() {
 			$importer = new ImportController;
 			$this->out .= $importer->out();
