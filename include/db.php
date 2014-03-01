@@ -1,5 +1,7 @@
 <?php
 	class Db {
+		private $link;
+
 		function __construct() {
             switch(DbConfig::TYPE) {
                 case 'mysql':
@@ -53,16 +55,18 @@
         }
 		
 		// Inserts new record with given values to the table.
-		function insert($table, $pairs, $sql_pairs = array()) {
+		public function insert($table, $pairs, $sql_pairs = array()) {
 			if(!is_array($pairs)) throw new Exception(master_lang::value_pairs_must_be_array);
             if(!is_array($sql_pairs)) throw new Exception(master_lang::sql_pairs_must_be_array);
 
             $vals = array();
             foreach($pairs as $k => $v) {
-                if(array_key_exists($k, $sql_pairs)) throw new Exception(str_replace("{{KEY}}", $k, lang::pair_collision));
+                if(array_key_exists($k, $sql_pairs)) throw new Exception(str_replace("{{KEY}}", $k, master_lang::pair_collision));
                 $vals[$k] = array('value', $v);
             }
             foreach($sql_pairs as $k => $v) $vals[$k] = array('sql', $v);
+
+			$table = $this->get_insert_table($table);
 
 			// Compose the query.
 			$q = "INSERT INTO $table (";
@@ -74,7 +78,7 @@
                 // Hodnoty
                 list($type, $val) = $v;
                 if($type === 'sql') $q .= $val.",";
-                else $q .= "'" . addslashes($val) . "',";
+                else $q .= $this->escape_string($val) . ",";
 			}
 			$q = substr($q, 0, -1) . ")";
 
@@ -83,6 +87,8 @@
 		
 		// Runs a query and returns its result as an object.
 		function query($q) {
+			$res = $error = null;
+
             switch(DbConfig::TYPE) {
                 case 'mysql':
                     $res = @mysql_query($q, $this->link);
@@ -94,7 +100,7 @@
                     break;
             }
 
-            if(!empty($error)) {
+            if(!empty($error) || !$res) {
                 throw new Exception(strtr(master_lang::query_failed, array(
                     "{{ERROR}}" => $error,
                     "{{QUERY}}" => $q
@@ -124,6 +130,7 @@
 		function delete_where($table, $cond = "TRUE") {
 			if(!$cond) $cond = "TRUE";
 			if(is_array($cond)) $cond = implode(" AND ", $cond);
+
 			return($this->query("DELETE FROM $table WHERE $cond"));
 		}
 
@@ -138,30 +145,59 @@
 		}
 		
 		function update_where($table, $cond, $pairs) {
+			$vals = array();
 			foreach($pairs as $k => $v) {
 				$vals[] = $this->escape_column($k) . "='" . addslashes($v) . "'";
 			}
 			if(is_array($cond)) $cond = implode(" AND ", $cond);
 			return($this->query("UPDATE $table SET " . implode(",", $vals) . " WHERE $cond"));
 		}
-		
+
 		// Finds records in a table according to the given conditions and returns the result.
-		function select_where($table, $cond = "TRUE", $sloupce = "*", $orderby = "", $limit = "") {
-			if(is_array($sloupce)) $sloupce = implode(",", $sloupce);
+		function select_where($table, $cond = "TRUE", $columns = "*", $orderby = "", $limit = "", $offset = "") {
+			if(is_array($columns)) $columns = implode(",", $columns);
 			if(is_array($cond)) $cond = implode(" AND ", $cond);
 			if(!$cond) $cond = "TRUE";
-			if(!$sloupce) $sloupce = "*";
+			if(is_array($cond)) {
+				array_walk($cond, function(&$item) {
+					$item = "($item)";
+				});
+				$cond = implode(" AND ", $cond);
+			}
+			if(!$columns) $columns = "*";
+
 			if($orderby) {
 				$orderby_suffix = " ORDER BY ";
 				(is_array($orderby))?
 					$orderby_suffix .= implode(",", $orderby):
 					$orderby_suffix .= $orderby;
-			} else $orderby_suffix = "";
-            if($limit) {
+			} else {
+				$orderby_suffix = "";
+			}
+
+			if($limit) {
                 $limit_suffix = " LIMIT $limit";
-            } else $limit_suffix = "";
-			
-			return($this->query("SELECT $sloupce FROM $table WHERE $cond" . $orderby_suffix . $limit_suffix));
+            } else {
+				$limit_suffix = "";
+			}
+
+			if($offset) {
+				if(DbConfig::TYPE === "mysql") {
+					throw new Exception(lang::NOT_SUPPORTED_ON_MYSQL);
+				}
+				$offset_suffix = " OFFSET $offset";
+			} else {
+				$offset_suffix = "";
+			}
+
+			$query = "SELECT $columns";
+			$query .= " FROM $table";
+			$query .= " WHERE $cond";
+			$query .= $orderby_suffix;
+			$query .= $limit_suffix;
+			$query .= $offset_suffix;
+
+			return $this->query($query);
 		}
 		
 		// Finds record in the table according to the ID and returns the result.
@@ -176,6 +212,7 @@
 		}
 		
 		function escape($s) {
+			$escaped = null;
             switch(DbConfig::TYPE) {
                 case 'mysql':
                     $escaped = mysql_real_escape_string($s);
@@ -183,11 +220,14 @@
                 case 'pgsql':
                     $escaped = pg_escape_string($this->link, $s);
                     break;
+				default:
+					throw new Exception(master_lang::unsupported_database_type);
             }
 			return($escaped);
 		}
 
         function escape_column($col) {
+			$escaped = null;
             switch(DbConfig::TYPE) {
                 case 'mysql':
                     $escaped = "`$col`";
@@ -195,6 +235,8 @@
                 case 'pgsql':
                     $escaped = "\"$col\"";
                     break;
+				default:
+					throw new Exception(master_lang::unsupported_database_type);
             }
 
             return $escaped;
@@ -421,12 +463,11 @@ EOQ;
             $pk = $this->get_primary_key($parent_table);
             $pk_name = $pk->expression;
 
-            $max_table_number = $this->get_max_table_number($parent_table);
-            for($i = $max_table_number; $i > 0; $i--) {
-                $parent_table_name = $parent_table->expression;
-                die($parent_table_name);
-                $child_table_name = "$parent_table_name $i";
-                $child_table = new DbObject($child_table_name);
+            $tables = $this->list_inherited_tables($parent_table);
+            foreach($tables as $child_table) {
+                if(!is_a($child_table, "DbObject")) {
+                    $child_table = new DbObject($child_table);
+                }
                 $rows = $this->select_where($child_table, "TRUE", "*", $pk);
 
                 while($row = $rows->fetch_assoc()) {
@@ -496,6 +537,6 @@ EOQ;
 		function __destruct() {
 //			mysql_close($this->link);
 		}
-		
+
 	}
 ?>

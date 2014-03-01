@@ -1,5 +1,4 @@
 <?php
-
 	/* *** Launching procedure *** */
 	
 	// Set up some global settings specific for this application.
@@ -15,6 +14,15 @@
 		public function __construct() {
 			$login = new Login;
 			$login->ensure();
+
+			DbMigration::migrate();
+		}
+
+		/* *** Decider sections. *** */
+		
+		public function section_default($selected_section = false) {
+			$examiner = new Examiner;
+			$this->out .= $examiner->out();
 		}
 
 		/* *** Decider sections. *** */
