@@ -15,6 +15,9 @@
 				
 				// Delete an existing language.
 				if(isset($_POST["delete"])) {
+                    if(!Login::superuser()) {
+                        throw new Exception(master_lang::unauthorized_access);
+                    }
 					foreach($_POST["delete"] as $k => $v) {
 						$this->language = new Language($k);
 						$this->delete();
@@ -23,6 +26,10 @@
 				
 				// Edit an existing language.
 				if(isset($_POST["edit"])) {
+                    if(!Login::superuser()) {
+                        throw new Exception(master_lang::unauthorized_access);
+                    }
+
 					foreach($_POST["edit"] as $k => $v) {
 						$this->language = new Language($k);
 					}
@@ -39,6 +46,10 @@
 				
 				// Set the language as default.
 				if(isset($_POST["set_default"])) {
+                    if(!Login::superuser()) {
+                        throw new Exception(master_lang::unauthorized_access);
+                    }
+
 					foreach($_POST["set_default"] as $k => $v) {
 						$this->language = new Language($k);
 						$this->set_default();

@@ -2,6 +2,11 @@
 class Login {
 	private $db;
 
+    const TABLE_USERS = "users";
+
+    const COL_ID = "id";
+    const COL_IS_SUPERUSER = "is_superuser"; // DB type: boolean.
+
 	public function __construct() {
 		$this->db = new Db;
 	}
@@ -30,7 +35,9 @@ class Login {
 			throw new Exception(lang::user_id_not_provided);
 		}
 
-		$id = $this->db->select('users',$id,'id')->fetch_single_field();
+        $table_users = new DbObject(self::TABLE_USERS);
+        $col_id = new DbObject(self::COL_ID);
+		$id = $this->db->select($table_users, $id, $col_id)->fetch_single_field();
 		if(!$id) {
 			throw new Exception(lang::invalid_user_id);
 		}
@@ -96,6 +103,25 @@ class Login {
             return false;
         }
         return $user_id == $_SESSION[master_config::APPLICATION]['active_user'];
+    }
+
+    /**
+     * Checks whether the active user is a superuser. If no user
+     * signed in, returns false.
+     *
+     * @return bool
+     */
+    static function superuser() {
+        if(empty($_SESSION[master_config::APPLICATION]['active_user'])) {
+            return false;
+        }
+
+        $db = new Db;
+        $table_users = new DbObject(self::TABLE_USERS);
+        $col_is_superuser = new DbObject(self::COL_IS_SUPERUSER);
+
+        $is_superuser = $db->select($table_users, $_SESSION[master_config::APPLICATION]['active_user'], array($col_is_superuser))->fetch_single_field();
+        return $is_superuser == "t";
     }
 }
 ?>
