@@ -5,6 +5,7 @@ class master_lang {
     const database_selection_error = "Database selection error";
 	const no_row_limit_set = "Row limit is not set, split tables can’t be used.";
 	const comparison_error = "Comparison/sort error.";
+    const unauthorized_access = "Unauthorized access.";
 
     const value_pairs_must_be_array = "Value pairs must be an array.";
     const sql_pairs_must_be_array = "SQL pairs must be an array.";

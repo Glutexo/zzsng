@@ -11,6 +11,7 @@
         var $id = null;
 		var $name = "";
 		var $language = null;
+        var $user_id = null;
 		var $terms = array();
 		
 		function __construct($id = null) {
@@ -20,6 +21,7 @@
 				$tabledata = $this->db->select(self::TABLE_LESSONS, $id)->fetch_assoc();
 				$this->name = $tabledata[self::COL_NAME];
 				$this->language = $tabledata[self::COL_LANGUAGE];
+                $this->user_id = $tabledata[self::COL_USER_ID];
 				
 				$res = $this->db->select_where(Term::TABLE_TERMS, Term::COL_LESSON . "='" . $id . "'", Term::COL_ID, $this->db->escape_column(Term::COL_ORDER));
 				while($row = $res->fetch_assoc())
@@ -134,5 +136,9 @@
 			$db = new Db;
 			return($db->query("SELECT COUNT(*) FROM " . Term::TABLE_TERMS . " WHERE " . $db->escape_column(Term::COL_LESSON) . "=" . (int) $id)->fetch_single_field());
 		}
+
+        public function getUserId() {
+            return $this->user_id;
+        }
 	}
 ?>
