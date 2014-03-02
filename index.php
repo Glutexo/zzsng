@@ -58,11 +58,6 @@
     require_once(config::APPLICATION . master_config::LANG_DIR . master_config::DEFAULT_LANGUAGE . master_config::DEFAULT_EXTENSION);
 	master_config::include_dir(config::APPLICATION . config::INCLUDE_DIR, config::INCLUDE_MASK, false);
 
-	// Begin with a header.
-	
-	$user_interface = new UserInterface;
-	$doc = $user_interface->out_head();
-	
 	/* *** The application itself *** */
 	
 	$application = new Application; // Application instance to be given to the Decider.
@@ -74,19 +69,21 @@
 	try {
 		$decider = new Decider;
 		$decider->perform($application, $section);
-		$doc .= $decider->out($application);
+		$body = $decider->out($application);
 	} catch(Exception $e) {
 		$tpl = new Template;
 		$tpl->reg("ERROR", $e->getMessage(), true);
         $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
 		$tpl->load("master_error.tpl");
 		$tpl->execute();
-		$doc .= $tpl->out();
+		$body = $tpl->out();
 	}
 
-	// End with a footer.
-	
-	$doc .= $user_interface->out_foot();
+    // Compose the page.
+    $user_interface = new UserInterface;
+    $head = $user_interface->out_head();
+    $foot = $user_interface->out_foot();
+    $doc = $head.$body.$foot;
 	
 	// Output!
 	
