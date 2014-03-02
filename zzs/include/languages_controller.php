@@ -33,7 +33,7 @@
 					foreach($_POST["edit"] as $k => $v) {
 						$this->language = new Language($k);
 					}
-					if(isset($_POST["done"]))	$this->edit($_POST["done"]);
+					if(isset($_POST["done"]))	$this->edit($_POST["name"]);
 					elseif(!$this->language->getId()) $this->error[] = lang::language_uneditable;
 					else {
                         $tpl->reg("LANGUAGE_TO_EDIT", array(
