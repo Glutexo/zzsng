@@ -10,7 +10,11 @@
 				// Add a new lesson.
 				if(isset($_POST["add"])) {
 					$this->lesson = new Lesson();
-					$this->add($_POST["name"], $_POST["language"]);
+                    if(empty($_POST["language"])) {
+                        $this->error[] = lang::language_must_exist_for_lesson_add;
+                    } else {
+					    $this->add($_POST["name"], $_POST["language"]);
+                    }
 				}
 
 				// Delete an existing lesson.
