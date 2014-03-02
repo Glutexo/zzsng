@@ -106,6 +106,7 @@ class lang {
     const lesson_delete_error = "Lekci «<span class=\"code\">{{NAME}}</span>» se nepodařilo smazat";
     const lesson_add_error = "Lekci «<span style=\"code\">{{NAME}}</span>» se nepodařilo přidat";
     const lesson_edit_error = "Lekci «<span class=\"code\">{{NAME}}</span>» se nepodařilo upravit";
+    const language_must_exist_for_lesson_add = "Musí existovat alespoň jeden jazyk, aby bylo možné přidat lekci.";
 
     // Lesson.
     const suffix_duplicate = " (duplikát)";

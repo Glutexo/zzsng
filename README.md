@@ -2,15 +2,19 @@
 
 “zzsng” is a simple tool for vocabulary revising (the flashcard method) when learning a foreign language. It also serves as a simple vocabulary database with an ability to categorize the vocabulary into groups (lessons) and to filter them by language.
 
-It is written in [PHP](http://www.php.net) and works with either a [MySQL](http://www.mysql.com) or [PostgreSQL](http://www.postgresql.org) database. For this application to work you need only a working [PHP](http://www.php.net) installation with a DB connection, either on your computer or on your remote hosting service. No special configuration or libraries needed.
+It is written in [PHP](http://www.php.net) and uses a [PostgreSQL](http://www.postgresql.org) database. For this application to work you need only a working [PHP](http://www.php.net) installation with a DB connection, either on your computer or on your remote hosting service. No special configuration or libraries needed.
 
-There is a working demo at [http://zzsng.herokuapp.com/](http://zzsng.herokuapp.com/).
+There is a working demo at [http://zzsng.hanafuda.cz/](http://zzsng.hanafuda.cz/).
+
+The demo supports multi-user environment, though no registration form is provided. If you want to use the demo as a cloud service for your language learning, just contact me and I will create a user entry for you. You’ll be then able to login using a URL with a login token I’d send you. Every user sees only his own lessons and can manage only his lessons and terms in them.
+
+Demo users can’t manage languages. They can add new ones, but they can’t rename them, delete them or mark them as default. This applies to the entries created by the demo users themselves as well.
 
 # Installation #
 
-You can run this tool on your local webserver that supports running [PHP](http://www.php.net) applications (e. g. [Apache](http://projects.apache.org/projects/http_server.html)). In addition to that you need a database server ([MySQL](http://www.mysql.com) and [PostgreSQL](http://www.postgresql.org] are supported) that can be accessed by the [PHP](http://www.php.net) scripts.
+You can run this tool on your local webserver that supports running [PHP](http://www.php.net) applications (e. g. [Apache](http://projects.apache.org/projects/http_server.html)). In addition to that you need a database server ([PostgreSQL](http://www.postgresql.org]) that can be accessed by the [PHP](http://www.php.net) scripts.
 
-After cloning the application somewhere to your document root for it to be accessible by the webserver, you need to create a database for it. After that enter your DB configuration to the _include/db_config.php_ file. You need to fill in a hostname (e. g. localhost), port, username and password to access your database server and a name of your DB. If you use [PostgreSQL](http://www.postgresql.org], set the _TYPE_ constant to _'pgsql'_; if you use [MySQL](http://www.mysql.com), set it to _'mysql'.
+After cloning the application somewhere to your document root for it to be accessible by the webserver, you need to create a database for it. After that enter your DB configuration to the _include/db_config.php_ file. You need to fill in a hostname (e. g. localhost), port, username and password to access your database server and a name of your DB.
 
 If your DB user has sufficent rights to create new database objects, you can run the automatic DB setup by accessing the application via an URL like this:
 
@@ -94,7 +98,11 @@ UPDATE: An exception has been made to the no-new-features statement. I needed an
 
 UPDATE 2: It is now possible to enable “reverse” examination: Instead of the term being displayed in a foreign language and then revealed its Czech translation, the translation is presented. Revaling the missing data diplays the original term in the foreign language.
 
-# New features – ideas #
+UPDATE 3: [MySQL](http://www.mysql.com/) is no longer supported. The references in the code have not been removed and it might not be difficult to make it work, but I don’t plan to do it. Use [PostgreSQL](http://www.postgresql.org/) instead. Hopefully this is the last update.
+
+# New features #
+
+## Ideas that will never make it to this poor, old and abandoned PHP version ##
 
 * Tree lesson hierarchy, languages being the top level.
 * Recoverable exam session.

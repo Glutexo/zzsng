@@ -106,6 +106,7 @@ class lang {
     const lesson_delete_error = "Lesson «<span class=\"code\">{{NAME}}</span>» could not be deleted.";
     const lesson_add_error = "Lesson «<span style=\"code\">{{NAME}}</span>» could not be added";
     const lesson_edit_error = "Lessons «<span class=\"code\">{{NAME}}</span>» could not be edited";
+    const language_must_exist_for_lesson_add = "At least one language must exists for adding a new lesson.";
 
     // Lesson.
     const suffix_duplicate = " (duplicate)";

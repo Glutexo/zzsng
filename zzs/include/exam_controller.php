@@ -4,7 +4,7 @@
 		const TABLE_EXAM_MISTAKES = "exam_mistakes";
 		const TABLE_EXAM_RESULTS = "exam_results";
 		const COL_TERM = "term";
-    const COL_ORDER = "order";
+		const COL_ORDER = "order";
 		const COL_CYCLE = "cycle";
 		const COL_HITS = "hits";
 		const COL_MISTAKES = "mistakes";
@@ -96,7 +96,7 @@
 			
 			$lessoner = new LessonsController;
 			if(!isset($term) || !$term) $tpl->reg("LESSONS", $lessoner->get_list(), true); // No need to load the list if it wouldn’t be displayed.
-            $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
+			$tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
             if(isset($lesson_name)) {
 				$tpl->reg("TITLE", str_replace("{{LESSON}}", $lesson_name, lang::exam_title), true);
 			}
