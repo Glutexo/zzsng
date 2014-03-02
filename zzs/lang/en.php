@@ -124,7 +124,7 @@ class lang {
     const term_must_have_term = "Term must have a term.";
     const term_must_have_translation = "Term must have a translation.";
     const term_must_have_id = "Term can’t be deleted without its ID.";
-    const term_list_must_have_lesson = "Term list can’t be obtainet without specifying a lesson.";
+    const term_list_must_have_lesson = "Term list can’t be obtained without specifying a lesson.";
     const lesson_empty = "Lesson «<span class=\"code\">{{NAME}}</span>» doesn’t contain any terms.";
     const term_list_could_not_be_obtained = "Term list for lesson «<span class=\"code\">{{NAME}}</span>» could not be obtained.";
     const term_delete_error = "Term «<span class=\"code\">{{TERM}}</span>» could not be deleted";
@@ -137,7 +137,7 @@ class lang {
     const term_added = "Term «<span class=\"code\">{{TERM}}</span>» added.";
     const add_term = "Add term";
     const term_edit_title = "Edit term «<span class=\"code\">{{TERM}}</span>»";
-    const term_list_title = "Seznam slovíček pro lekci «<span class=\"code\">{{LESSON}}</span>»";
+    const term_list_title = "Term list for lesson «<span class=\"code\">{{LESSON}}</span>»";
     const sort_by_order = "Sort by order";
     const sort_by_term = "Sort alphabetically";
 	const order_save_succeeded = "Term order saved.";

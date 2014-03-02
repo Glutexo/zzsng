@@ -128,5 +128,13 @@
 			
 			return(true);
 		}
-	}
+
+        public function getUserId() {
+            if(!$this->lesson) {
+                return null;
+            }
+            $lesson_obj = new Lesson($this->lesson);
+            return $lesson_obj->getUserId();
+        }
+    }
 ?>

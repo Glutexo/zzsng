@@ -15,6 +15,9 @@
 				
 				// Delete an existing language.
 				if(isset($_POST["delete"])) {
+                    if(!Login::superuser()) {
+                        throw new Exception(master_lang::unauthorized_access);
+                    }
 					foreach($_POST["delete"] as $k => $v) {
 						$this->language = new Language($k);
 						$this->delete();
@@ -23,10 +26,14 @@
 				
 				// Edit an existing language.
 				if(isset($_POST["edit"])) {
+                    if(!Login::superuser()) {
+                        throw new Exception(master_lang::unauthorized_access);
+                    }
+
 					foreach($_POST["edit"] as $k => $v) {
 						$this->language = new Language($k);
 					}
-					if(isset($_POST["done"]))	$this->edit($_POST["done"]);
+					if(isset($_POST["done"]))	$this->edit($_POST["name"]);
 					elseif(!$this->language->getId()) $this->error[] = lang::language_uneditable;
 					else {
                         $tpl->reg("LANGUAGE_TO_EDIT", array(
@@ -39,6 +46,10 @@
 				
 				// Set the language as default.
 				if(isset($_POST["set_default"])) {
+                    if(!Login::superuser()) {
+                        throw new Exception(master_lang::unauthorized_access);
+                    }
+
 					foreach($_POST["set_default"] as $k => $v) {
 						$this->language = new Language($k);
 						$this->set_default();
@@ -77,7 +88,13 @@
 		// Gets the language table.
 		function get_list() {
 			try {
-				$out = $this->db->fetch_assocs("SELECT * FROM " . Language::TABLE_LANGUAGES . " ORDER BY " . Language::COL_NAME);
+                $table_languages = new DbObject(Language::TABLE_LANGUAGES);
+                $col_id = new DbObject(Language::COL_ID);
+                $col_name = new DbObject(Language::COL_NAME);
+
+                $orderby = "$col_id = 0 DESC, $col_name";
+				$out = $this->db->select_where($table_languages, "TRUE", "*", $orderby)->fetch_assocs();
+
 				if(!$out) $this->warning[] = lang::no_language_exists;
                 else {
                     foreach($out as $k => $language) {
