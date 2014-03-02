@@ -27,6 +27,10 @@
 				// Add a new term.
 				if(isset($_POST["add"])) {
 					$this->term = new Term();
+                    $lesson = new Lesson($_POST["lesson"]);
+                    if(!Login::is_active_user($lesson->getUserId())) {
+                        throw new Exception(master_lang::unauthorized_access);
+                    }
 					$this->add($_POST["term"], $_POST["metadata"], $_POST["translation"], $_POST["comment"], $_POST["lesson"]);
 				}
 
@@ -34,6 +38,9 @@
 				if(isset($_POST["delete"])) {
 					foreach($_POST["delete"] as $k => $v) {
 						$this->term = new Term($k);
+                        if(!Login::is_active_user($this->term->getUserId())) {
+                            throw new Exception(master_lang::unauthorized_access);
+                        }
 						$this->delete();
 					}
 				}
@@ -42,6 +49,9 @@
 				if(isset($_POST["edit"])) {
 					foreach($_POST["edit"] as $k => $v) {
 						$this->term = new Term($k);
+                        if(!Login::is_active_user($this->term->getUserId())) {
+                            throw new Exception(master_lang::unauthorized_access);
+                        }
 					}
 					if(isset($_POST["done"])) $this->edit($_POST["term"], $_POST["metadata"], $_POST["translation"], $_POST["comment"]);
 					else {
@@ -58,7 +68,10 @@
 				// Save term order.
 
 				if(isset($_POST['save_order'])) {
-					$order = $_POST['order'];
+                    $lesson = new Lesson($_POST["lesson"]);
+                    if(!Login::is_active_user($lesson->getUserId())) {
+                        throw new Exception(master_lang::unauthorized_access);
+                    }
 					$this->save_order($_POST['order']);
 					$this->notice[] = lang::order_save_succeeded;
 				}
@@ -68,6 +81,9 @@
 
 			if(isset($_POST["lesson"])) {
 				$this->lesson = new Lesson($_POST["lesson"]);
+                if(!Login::is_active_user($this->lesson->getUserId())) {
+                    throw new Exception(master_lang::unauthorized_access);
+                }
 				$tpl->reg("LESSON_ID", $this->lesson->getId(), true);
 				$tpl->reg("LESSON_NAME", $this->lesson->getName(), true);
 				$tpl->reg("TERMS", $this->get_list(), true);

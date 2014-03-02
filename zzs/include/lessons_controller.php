@@ -17,6 +17,9 @@
 				if(isset($_POST["delete"])) {
 					foreach($_POST["delete"] as $k => $v) {
 						$this->lesson = new Lesson($k);
+                        if(!Login::is_active_user($this->lesson->getUserId())) {
+                            throw new Exception(master_lang::unauthorized_access);
+                        }
 						$this->delete();
 					}
 				}
@@ -25,6 +28,10 @@
 				if(isset($_POST["edit"])) {
 					foreach($_POST["edit"] as $k => $v) {
 						$this->lesson = new Lesson($k);
+                        if(!Login::is_active_user($this->lesson->getUserId())) {
+                            throw new Exception(master_lang::unauthorized_access);
+                        }
+
 						if(isset($_POST["done"]))	$this->edit($_POST["name"], $_POST["language"]);
 						else $tpl->reg("LESSON_TO_EDIT", array(
 							"id" => $this->lesson->getId(),
@@ -38,6 +45,9 @@
 				if(isset($_POST["duplicate"])) {
 					foreach($_POST["duplicate"] as $k => $v) {
 						$this->lesson = new Lesson($k);
+                        if(!Login::is_active_user($this->lesson->getUserId())) {
+                            throw new Exception(master_lang::unauthorized_access);
+                        }
 						$this->duplicate();
 					}
 				}

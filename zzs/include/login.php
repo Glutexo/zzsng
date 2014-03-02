@@ -82,5 +82,20 @@ class Login {
 		$login = $this->db->select('users',$_SESSION[master_config::APPLICATION]['active_user'],array('login'))->fetch_single_field();
 		return $login;
 	}
+
+    /**
+     * Compares the given user ID with the ID of the active user.
+     * Returns true if they match. False otherwise. When no user
+     * is signed in, returns false.
+     *
+     * @param integer $user_id
+     * @return bool
+     */
+    static function is_active_user($user_id) {
+        if(empty($_SESSION[master_config::APPLICATION]['active_user'])) {
+            return false;
+        }
+        return $user_id == $_SESSION[master_config::APPLICATION]['active_user'];
+    }
 }
 ?>

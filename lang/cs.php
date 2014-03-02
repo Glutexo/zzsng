@@ -5,6 +5,7 @@ class master_lang {
     const database_selection_error = "Selhalo zvolení databáze";
 	const no_row_limit_set = "Nenastaven nejvyšší možný počet řádků v tabulce, nelze používat dělené tabulky.";
 	const comparison_error = "Chyba při porovnávání/řazení.";
+    const unauthorized_access = "Neoprávněný přístup.";
 
     const value_pairs_must_be_array = "Páry hodnot pro vložení musejí být pole.";
     const sql_pairs_must_be_array = "Páry SQL hodnot pro vložení musejí být pole.";
