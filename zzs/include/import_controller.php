@@ -97,14 +97,19 @@
 			$languager = new LanguagesController;
             $lessoner = new LessonsController;
 			
-			$tpl = new Template;
-			$tpl->reg("LANGUAGES", $languager->get_list(), true);
-			$tpl->reg("LESSONS", $lessoner->get_list(), true);
-            $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
-			$tpl->load($_GET["section"].".tpl");
-			$tpl->execute();
+            $out = "";
+            if(!empty($_GET["section"])) {
+                $tpl = new Template;
+                $tpl->reg("LANGUAGES", $languager->get_list(), true);
+                $tpl->reg("LESSONS", $lessoner->get_list(), true);
+                $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
+                $tpl->load($_GET["section"].".tpl");
+                $tpl->execute();
 
-			return(parent::out($tpl->out()));
+                $out = $tpl->out();
+            }
+
+            return parent::out($out);
 		}
 		
 	}
