@@ -46,7 +46,8 @@ var $closetag = "?>"; // closing tag
 var $openvar = "{{"; // var pfx
 var $closevar = "}}"; // var sfx
 var $undefined_subst = ""; // subst. for undefined variables
-var $hard_max_loops = 1000; // maximum iterations per loop
+# var $hard_max_loops = 1000; // maximum iterations per loop
+var $hard_max_loops = null; // disable maximum iterations per loop
 var $fail_if_include_fails = true; // fail execute() when tpl-include fails?
 var $usecache = true; // use caching
 var $cachedir = "cache/"; // where to put compiled templates
@@ -795,7 +796,7 @@ class TplWhile{
 		$iteration = 0;
 		$max = $tpl->hard_max_loops;
 		$tpl->_set_loop_index($iteration);
-		while($max && $this->cond->evaluate($tpl)){
+		while((is_null($max) || $max) && $this->cond->evaluate($tpl)){
 			if(! $tpl->_exec($this->content)) return false;
 			$max--;
 			$iteration++;
@@ -817,7 +818,7 @@ class TplLoop{
 		$num = $this->times->evaluate($tpl);
 		$max = $tpl->hard_max_loops;
 		$iteration = 0;
-		while($max && $num){
+		while((is_null($max) || $max) && $num){
 			$tpl->_set_loop_index($iteration);
 			if(! $tpl->_exec($this->content)) return false;
 			$max--;
@@ -843,7 +844,9 @@ class TplEach{
 		}
 		$max = $tpl->hard_max_loops;
 		foreach($ar as $i => $j){
-			if(! $max) break;
+			if(!is_null($max) && !$max) {
+				break;
+			}
 			$tpl->_set_loop_index($i);
 			$tpl->_set_loop_key($i);
 			$tpl->_set_loop_val($ar[$i]);
