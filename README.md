@@ -100,6 +100,8 @@ UPDATE 2: It is now possible to enable “reverse” examination: Instead of the
 
 UPDATE 3: [MySQL](http://www.mysql.com/) is no longer supported. The references in the code have not been removed and it might not be difficult to make it work, but I don’t plan to do it. Use [PostgreSQL](http://www.postgresql.org/) instead. Hopefully this is the last update.
 
+UPDATE 4: Fixed the template engine: Now it supports iterations over more than 1,000 rows. This might result in unability to save order for terms in a lesson that has more than 1,000 terms, because of a PHP’s limit on a number of form fields.
+
 # New features #
 
 ## Ideas that will never make it to this poor, old and abandoned PHP version ##

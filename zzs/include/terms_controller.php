@@ -120,6 +120,7 @@
 					WHERE " . $this->db->escape_column(Term::COL_LESSON) . "='" . $this->lesson->getId() . "'
 					ORDER BY " . $orderby;
 				$out = $this->db->fetch_assocs($sql);
+
 				if(!$out) $this->warning[] = str_replace("{{NAME}}", $name, lang::lesson_empty);
 			} catch(Exception $e) {
 				$this->error[] = str_replace("{{NAME}}", $name, lang::term_list_could_not_be_obtained);
@@ -185,7 +186,7 @@
 			return($out);
 		}
 
-		// Adds a new term. (Actualy just an alias to “$this->edit()”.
+		// Adds a new term. (Actualy just an alias to “$this->edit()”.)
 		function add($term, $metadata, $translation, $comment, $lesson) {
 			return($this->edit($term, $metadata, $translation, $comment, $lesson, self::ADD));
 		}
