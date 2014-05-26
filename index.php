@@ -62,6 +62,19 @@
 	
 	$application = new Application; // Application instance to be given to the Decider.
 
+	if(isset($_REQUEST['__post'])) {
+		$post = (array) json_decode($_REQUEST['__post']);
+		foreach($post as $k => $v) {
+			$v = is_object($v) ? (array) $v : $v;
+			$_REQUEST[$k] = $v;
+			$_POST[$k] = $v;
+		}
+	}
+	unset($_GET['__post']);
+	unset($_POST['__post']);
+	unset($_REQUEST['__post']);
+	var_dump($_REQUEST);
+
 	// Module selection.
 	
 	$section = (isset($_REQUEST['section']) ? $_REQUEST['section'] : null);

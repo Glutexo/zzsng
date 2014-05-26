@@ -7,7 +7,9 @@
 		<meta http-equiv="content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="Content-language" content="{{$LANG['lang']}}" />
 		<meta http-equiv="author" content="Glutexo" />
-		<link rel="stylesheet" href="{{TEMPLATE_DIR}}zzsng.css">
+		<link rel="stylesheet" type="text/css" href="{{TEMPLATE_DIR}}zzsng.css">
+        <script type="text/javascript" src="{{TEMPLATE_DIR}}jquery.min.js"></script>
+        <script type="text/javascript" src="{{TEMPLATE_DIR}}helpers.js"></script>
 	</head>
 	<body>
 		<div id="header">
