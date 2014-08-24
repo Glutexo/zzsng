@@ -44,5 +44,16 @@
             $refl = new ReflectionClass("lang");
             return $refl->getConstants();
         }
+
+		static function std_class_to_array_recursive($std) {
+			$array = (array) $std;
+			foreach($array as &$v) {
+				if(is_object($v) && is_a($v,'stdClass')) {
+					$v = self::std_class_to_array_recursive($v);
+				}
+			}
+			unset($v);
+			return $array;
+		}
 	}
 ?>

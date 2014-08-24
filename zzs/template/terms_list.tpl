@@ -46,3 +46,9 @@
 		</form>
 	</div>
 <?tpl end ?>
+<script type="text/javascript">
+// <![CDATA[
+$(function(event) {
+  $('form').form2json();
+});// ]]>
+</script>
