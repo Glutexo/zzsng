@@ -102,6 +102,8 @@ UPDATE 3: [MySQL](http://www.mysql.com/) is no longer supported. The references 
 
 UPDATE 4: Fixed the template engine: Now it supports iterations over more than 1,000 rows. This might result in unability to save order for terms in a lesson that has more than 1,000 terms, because of a PHP’s limit on a number of form fields.
 
+UPDATE 5: Terms are submitted via a form2json plugin. That means that there is no limitation on how many form fields are submitted.
+
 # New features #
 
 ## Ideas that will never make it to this poor, old and abandoned PHP version ##
