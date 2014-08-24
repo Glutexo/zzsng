@@ -1,4 +1,4 @@
-// http://stackoverflow.com/questions/2403179/how-to-get-form-data-as-a-object-in-jquery
+// Based on a code by Pointy presented at http://stackoverflow.com/a/2403206/1307676
 // Creates an object with form data.
 function getFormData(form) {
     var paramObj = {};

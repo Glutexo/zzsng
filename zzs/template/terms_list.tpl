@@ -48,25 +48,7 @@
 <?tpl end ?>
 <script type="text/javascript">
 // <![CDATA[
-$(function(document_event) {
-    var $form = $('form');
-
-    function form_submit(event) {
-        event.preventDefault();
-
-        var form = document.createElement('form');
-        form.action = $form.attr('action');
-        form.method = $form.attr('method');
-
-        var hidden = document.createElement('input');
-        hidden.name = '__post';
-        hidden.value = JSON.stringify(getFormData($form));
-
-        $(form).append(hidden)
-               .trigger('submit');
-    }
-
-    $form.on('submit', form_submit);
-});
-// ]]>
+$(function(event) {
+  $('form').form2json();
+});// ]]>
 </script>
