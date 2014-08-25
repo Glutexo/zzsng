@@ -2,7 +2,7 @@
 class lang {
     // Configuration.
     const lang = "en";
-    const project_name = "Vocabulary exam";
+    const project_name = "- Vocabulary exam -";
     const master_error = "The application can’t run!";
     const reason = "Reason";
 
