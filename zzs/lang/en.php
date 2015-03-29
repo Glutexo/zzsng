@@ -119,6 +119,7 @@ class lang {
     const term_count = "Term count";
     const duplicate = "Duplicate";
     const terms = "Terms";
+    const no_language_picked = "No language picked.";
 
     // Term errors.
     const term_must_have_lesson = "Lesson can’t be set to no value.";

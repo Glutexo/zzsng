@@ -119,6 +119,7 @@ class lang {
     const term_count = "Počet slovíček";
     const duplicate = "Duplikovat";
     const terms = "Slovíčka";
+    const no_language_picked = "Nezvolen jazyk.";
 
     // Term errors.
     const term_must_have_lesson = "Lekci nelze nastavit jako žádnou.";
