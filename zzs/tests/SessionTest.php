@@ -9,7 +9,7 @@ class SessionTest extends ZzsTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		static::requireDb();
+		$this->initDb();
 
 		$_SESSION = array();
 	}
