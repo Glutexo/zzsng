@@ -23,13 +23,13 @@ EOSQL
 );
 
 		if($exists == 't') {
-			$_SESSION['language'] = $language;
+			$_SESSION[master_config::APPLICATION]['language'] = $language;
 		}
 	}
 
 	public function getLanguage() {
-		return array_key_exists('language', $_SESSION) ?
-			$_SESSION['language'] :
+		return array_key_exists(master_config::APPLICATION, $_SESSION) && is_array($_SESSION[master_config::APPLICATION]) && array_key_exists('language', $_SESSION[master_config::APPLICATION]) ?
+			$_SESSION[master_config::APPLICATION]['language'] :
 			null;
 	}
 

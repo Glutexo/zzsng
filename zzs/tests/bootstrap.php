@@ -6,6 +6,9 @@ class ZzsTestCase extends PHPUnit_Framework_TestCase {
 	protected $db;
 
 	public function setUp() {
+		$frameworkBasePath = self::frameworkBasePath();
+		require_once $frameworkBasePath . DIRECTORY_SEPARATOR . 'config.php';
+
 		$frameworkIncludePath = self::frameworkIncludePath();
 		require_once $frameworkIncludePath . DIRECTORY_SEPARATOR . 'Helpers.php';
 
@@ -32,9 +35,13 @@ class ZzsTestCase extends PHPUnit_Framework_TestCase {
 		return implode(DIRECTORY_SEPARATOR, $pathParts);
 	}
 
-	private static function frameworkIncludePath() {
-		$pathParts = array(__DIR__, '..', '..', 'include');
+	private static function frameworkBasePath() {
+		$pathParts = array(__DIR__, '..', '..');
 		return implode(DIRECTORY_SEPARATOR, $pathParts);
+	}
+
+	private static function frameworkIncludePath() {
+		return self::frameworkBasePath() . DIRECTORY_SEPARATOR . 'include';
 	}
 
 	private static function requireDb() {

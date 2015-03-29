@@ -48,8 +48,7 @@ EOSQL
 			$session = $self->session;
 
 			$language = new stdClass;
-			$_SESSION['language'] = $language;
-			$self->assertSame($language, Session::getLanguage(), "Current language cannot be retrieved from the session.");
+			$_SESSION[master_config::APPLICATION]['language'] = $language;
 			$self->assertSame($language, $session->getLanguage(), "Current language cannot be retrieved from the session.");
 		});
 	}
