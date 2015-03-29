@@ -2,16 +2,24 @@
 class ZzsTestCase extends PHPUnit_Framework_TestCase {
 	const FILE_EXTENSION_SEPARATOR = '.';
 	const PHP_FILE_EXTENSION = 'php';
+	const INCLUDE_DIR_NAME = 'include';
+	const CONFIG_FILE_NAME = 'config';
 
 	public $existingLanguages;
 	protected $db;
 
 	public function setUp() {
-		$frameworkBasePath = self::frameworkBasePath();
-		require_once $frameworkBasePath . DIRECTORY_SEPARATOR . 'config.php';
+		$basePaths = array(
+			self::frameworkBasePath(),
+			self::projectBasePath()
+		);
+		array_walk($basePaths, function($basePath) {
+			ZzsTestCase::includeConfig($basePath);
+			ZzsTestCase::includeLang($basePath);
+		});
 
-		$frameworkIncludePath = self::frameworkIncludePath();
-		require_once $frameworkIncludePath . DIRECTORY_SEPARATOR . 'Helpers.php';
+		self::includeFrameworkClass('Helpers');
+		self::includeFrameworkClass('doer');
 
 		$className = get_class($this);
 		$classNameStripped = preg_replace('/Test$/', '', $className);
@@ -31,9 +39,30 @@ class ZzsTestCase extends PHPUnit_Framework_TestCase {
 		require_once $projectIncludePath . DIRECTORY_SEPARATOR . $classNameSnake . self::FILE_EXTENSION_SEPARATOR . self::PHP_FILE_EXTENSION;
 	}
 
-	private static function projectIncludePath() {
-		$pathParts = array(__DIR__, '..', 'include');
+	public static function includeFrameworkClass($className) {
+		$frameworkIncludePath = self::frameworkIncludePath();
+		require_once $frameworkIncludePath . DIRECTORY_SEPARATOR . $className . self::FILE_EXTENSION_SEPARATOR . self::PHP_FILE_EXTENSION;
+	}
+
+	public static function includeConfig($basePath) {
+		$extension = self::FILE_EXTENSION_SEPARATOR . self::PHP_FILE_EXTENSION;
+		$fileName = self::CONFIG_FILE_NAME . $extension;
+		require_once $basePath . DIRECTORY_SEPARATOR . $fileName;
+	}
+
+	public static function includeLang($basePath) {
+		$extension = self::FILE_EXTENSION_SEPARATOR . self::PHP_FILE_EXTENSION;
+		$filename = master_config::DEFAULT_LANGUAGE . $extension;
+		require_once implode(DIRECTORY_SEPARATOR, array($basePath, 'lang', $filename));
+	}
+
+	private static function projectBasePath() {
+		$pathParts = array(__DIR__, '..');
 		return implode(DIRECTORY_SEPARATOR, $pathParts);
+	}
+
+	private static function projectIncludePath() {
+		return self::projectBasePath() . DIRECTORY_SEPARATOR . self::INCLUDE_DIR_NAME;
 	}
 
 	private static function frameworkBasePath() {
@@ -42,7 +71,7 @@ class ZzsTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 	private static function frameworkIncludePath() {
-		return self::frameworkBasePath() . DIRECTORY_SEPARATOR . 'include';
+		return self::frameworkBasePath() . DIRECTORY_SEPARATOR . self::INCLUDE_DIR_NAME;
 	}
 
 	private static function requireDb() {
