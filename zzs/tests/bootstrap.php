@@ -3,6 +3,7 @@ class ZzsTestCase extends PHPUnit_Framework_TestCase {
 	const FILE_EXTENSION_SEPARATOR = '.';
 	const PHP_FILE_EXTENSION = 'php';
 
+	public $existingLanguages;
 	protected $db;
 
 	public function setUp() {
@@ -50,6 +51,33 @@ class ZzsTestCase extends PHPUnit_Framework_TestCase {
 		array_walk($filesToInclude, function($fileToInclude) use($includePath) {
 			require_once $includePath . DIRECTORY_SEPARATOR . $fileToInclude . ZzsTestCase::FILE_EXTENSION_SEPARATOR . ZzsTestCase::PHP_FILE_EXTENSION;
 		});
+	}
+
+	protected static function withSessionBackup($test) {
+		$_session = $_SESSION;
+		call_user_func($test);
+		$_SESSION = $_session;
+	}
+
+	protected function enumerateExistingLanguages() {
+		$tableName = new DbObject(Language::TABLE_LANGUAGES);
+		$idColName = new DbObject(Language::COL_ID);
+		$result = $this->db->query(<<<EOSQL
+SELECT $idColName
+FROM $tableName
+WHERE $idColName > 0
+EOSQL
+		);
+
+		$this->existingLanguages = array();
+		while(!is_null($id = $result->fetch_single_field())) {
+			$this->existingLanguages[] = intval($id);
+		}
+	}
+
+	public function pickRandomLanguage() {
+		$randomKey = array_rand($this->existingLanguages);
+		return $this->existingLanguages[$randomKey];
 	}
 
 }

@@ -1,29 +1,6 @@
 <?php
 class SessionTest extends ZzsTestCase {
-	public $existingLanguages;
 	public $session;
-
-	private static function withSessionBackup($test) {
-		$_session = $_SESSION;
-		call_user_func($test);
-		$_SESSION = $_session;
-	}
-
-	private function enumerateExistingLanguages() {
-		$tableName = new DbObject(Language::TABLE_LANGUAGES);
-		$idColName = new DbObject(Language::COL_ID);
-		$result = $this->db->query(<<<EOSQL
-SELECT $idColName
-FROM $tableName
-WHERE $idColName > 0
-EOSQL
-		);
-
-		$this->existingLanguages = array();
-		while(!is_null($id = $result->fetch_single_field())) {
-			$this->existingLanguages[] = intval($id);
-		}
-	}
 
 	public function setUp() {
 		parent::setUp();
@@ -37,14 +14,9 @@ EOSQL
 		$_SESSION = array();
 	}
 
-	public function pickRandomLanguage() {
-		$randomKey = array_rand($this->existingLanguages);
-		return $this->existingLanguages[$randomKey];
-	}
-
 	public function testLanguageCanBeGotten() {
 		$self = $this;
-		self::withSessionBackup(function() use($self) {
+		static::withSessionBackup(function() use($self) {
 			$session = $self->session;
 
 			$language = new stdClass;
@@ -58,7 +30,7 @@ EOSQL
 	 */
 	public function testLanguageCanBeSet() {
 		$self = $this;
-		self::withSessionBackup(function() use($self) {
+		static::withSessionBackup(function() use($self) {
 			$session = $self->session;
 
 			$randomLanguage = $self->pickRandomLanguage();
@@ -75,7 +47,7 @@ EOSQL
 	 */
 	public function testLanguageIsSetAsInteger() {
 		$self = $this;
-		self::withSessionBackup(function() use($self) {
+		static::withSessionBackup(function() use($self) {
 			$session = $self->session;
 
 			$randomLanguage = $self->pickRandomLanguage();
@@ -90,7 +62,7 @@ EOSQL
 	 */
 	public function testInvalidLanguageCannotBeSet() {
 		$self = $this;
-		self::withSessionBackup(function() use($self) {
+		static::withSessionBackup(function() use($self) {
 			$session = $self->session;
 
 			$maxId = max($self->existingLanguages);
