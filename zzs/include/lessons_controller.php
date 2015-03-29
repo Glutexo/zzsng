@@ -60,18 +60,11 @@
 				$this->error[] = lang::action_failed . ": " . $e->getMessage();
 			}
             
-            // Set a language filter.
-			$session = new Session($this->db);
-            if(isset($_GET["language"])) {
-				$session->setLanguage($_GET["language"]);
-            }
-
 			$languager = new LanguagesController;
-			
+
 			$tpl->reg("LESSONS", $this->get_list(), true);
 			$tpl->reg("LANGUAGES", $languager->get_list(), true);
             $tpl->reg("SECTION", $_REQUEST["section"], true);
-			$tpl->reg("LANGUAGE", $session->getLanguage(), true);
             $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
 			$tpl->load("lessons.tpl");
 			$tpl->execute();

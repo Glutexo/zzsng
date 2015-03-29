@@ -158,6 +158,7 @@ class lang {
 	// Login.
 	const user_id_not_provided = "User ID not provided.";
 	const invalid_user_id = "Invalid user ID.";
+	const user = "User";
 
 	// Db.
 	const NOT_SUPPORTED_ON_MYSQL = "Not supported on MySQL database.";

@@ -158,6 +158,7 @@ class lang {
 	// Login.
 	const user_id_not_provided = "Nepředáno ID uživatele.";
 	const invalid_user_id = "Neplatné ID uživatele.";
+    const user = "Uživatel";
 
 	// Db.
 	const NOT_SUPPORTED_ON_MYSQL = "Nepodporováno pro MySQL databázi.";

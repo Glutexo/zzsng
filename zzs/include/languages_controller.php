@@ -173,5 +173,17 @@
 			
 			return(true);
 		}
+
+		public static function saveSessionValuesFromRequest() {
+			// @TODO: Write tests.
+			$db = new Db;
+			$db->connect();
+
+			// Set a language filter.
+			$session = new Session($db);
+			if(isset($_GET["language"])) {
+				$session->setLanguage($_GET["language"]);
+			}
+		}
 	}
 ?>

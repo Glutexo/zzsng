@@ -11,6 +11,8 @@
 			$login = new Login;
 			$login->ensure();
 
+			LanguagesController::saveSessionValuesFromRequest();
+
 			DbMigration::migrate();
 		}
 
