@@ -61,16 +61,17 @@
 			}
             
             // Set a language filter.
+			$session = new Session($this->db);
             if(isset($_GET["language"])) {
-				Session::setLanguage($_GET["language"]);
+				$session->setLanguage($_GET["language"]);
             }
-            
+
 			$languager = new LanguagesController;
 			
 			$tpl->reg("LESSONS", $this->get_list(), true);
 			$tpl->reg("LANGUAGES", $languager->get_list(), true);
             $tpl->reg("SECTION", $_REQUEST["section"], true);
-			$tpl->reg("LANGUAGE", isset($_SESSION["language"]) ? $_SESSION["language"] : null, true);
+			$tpl->reg("LANGUAGE", $session->getLanguage(), true);
             $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
 			$tpl->load("lessons.tpl");
 			$tpl->execute();

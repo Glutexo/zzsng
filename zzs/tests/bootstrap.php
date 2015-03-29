@@ -9,11 +9,10 @@ class ZzsTestCase extends PHPUnit_Framework_TestCase {
 		$frameworkIncludePath = self::frameworkIncludePath();
 		require_once $frameworkIncludePath . DIRECTORY_SEPARATOR . 'Helpers.php';
 
-		$projectIncludePath = self::projectIncludePath();
 		$className = get_class($this);
-
 		$classNameStripped = preg_replace('/Test$/', '', $className);
-		$classNameStrippedSnake = Helpers::ConvertToSnakeCase($classNameStripped);
+		self::includeProjectClass($classNameStripped);
+	}
 
 	public function initDb() {
 		self::requireDb();
@@ -21,7 +20,11 @@ class ZzsTestCase extends PHPUnit_Framework_TestCase {
 		$this->db->connect();
 	}
 
-		require_once $projectIncludePath . DIRECTORY_SEPARATOR . $classNameStrippedSnake . self::FILE_EXTENSION_SEPARATOR . self::PHP_FILE_EXTENSION;
+	public static function includeProjectClass($className) {
+		$classNameSnake = Helpers::ConvertToSnakeCase($className);
+
+		$projectIncludePath = self::projectIncludePath();
+		require_once $projectIncludePath . DIRECTORY_SEPARATOR . $classNameSnake . self::FILE_EXTENSION_SEPARATOR . self::PHP_FILE_EXTENSION;
 	}
 
 	private static function projectIncludePath() {
