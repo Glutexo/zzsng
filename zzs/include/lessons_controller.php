@@ -62,7 +62,7 @@
             
             // Set a language filter.
             if(isset($_GET["language"])) {
-                $_SESSION["language"] = $_GET["language"];
+				Session::setLanguage($_GET["language"]);
             }
             
 			$languager = new LanguagesController;
