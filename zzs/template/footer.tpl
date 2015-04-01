@@ -3,7 +3,7 @@
 			<?tpl if just $LINKS ?>
 			::
 			<?tpl each $LINKS ?>
-				<a href="{{$LINKS[$@k]['href']}}">{{$LINKS[$@k]['text']}}</a> ::
+				<a href="{{$LINKS[$@k]['href']}}" style="{{$LINKS[$@k]['style']}}">{{$LINKS[$@k]['text']}}</a> ::
 			<?tpl end ?>
 			<?tpl end ?>
 		</div>
