@@ -119,6 +119,7 @@ class lang {
     const term_count = "Počet slovíček";
     const duplicate = "Duplikovat";
     const terms = "Slovíčka";
+    const no_language_picked = "Nezvolen jazyk.";
 
     // Term errors.
     const term_must_have_lesson = "Lekci nelze nastavit jako žádnou.";
@@ -157,6 +158,7 @@ class lang {
 	// Login.
 	const user_id_not_provided = "Nepředáno ID uživatele.";
 	const invalid_user_id = "Neplatné ID uživatele.";
+    const user = "Uživatel";
 
 	// Db.
 	const NOT_SUPPORTED_ON_MYSQL = "Nepodporováno pro MySQL databázi.";

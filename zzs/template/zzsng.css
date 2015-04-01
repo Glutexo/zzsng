@@ -5,8 +5,24 @@ div#header {
 
 	margin-bottom: 20px;
 	border-bottom: 1px solid black;
+}
 
-	text-align: center;
+div#header div#header_title {
+	float: left;
+}
+
+div#header div#header_title h1 {
+	margin: 0;
+}
+
+div#header div#header_controls {
+	float: right;
+}
+div#header div#header_controls table th {
+	text-align: left;
+}
+div#header div#header_controls table td {
+	padding-top: 0; padding-bottom: 0;
 }
 
 div#footer {
@@ -90,3 +106,5 @@ textarea.data {
 }
 
 input.small_number { width: 40px; }
+
+.clear { clear: both; }

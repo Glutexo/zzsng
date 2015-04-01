@@ -1,0 +1,8 @@
+<phpunit bootstrap="bootstrap.php">
+	<testsuites>
+		<testsuite name="zzs">
+			<file>SessionTest.php</file>
+			<file>LessonsControllerTest.php</file>
+		</testsuite>
+	</testsuites>
+</phpunit>

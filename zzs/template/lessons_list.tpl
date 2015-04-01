@@ -6,18 +6,6 @@
 				<th>{{$LANG['name']}}</th>
 				<th>
                     {{$LANG['language']}}
-                    <form method="GET" id="language_form">
-                        <input type="hidden" name="section" value="{{SECTION}}" />
-                        <select name="language" onchange="document.getElementById('language_form').submit();">
-                        <?tpl each $LANGUAGES ?>
-                            <?tpl if eq $LANGUAGE $LANGUAGES[$@k]['id'] ?>
-                            <option value="{{$LANGUAGES[$@k]['id']}}" selected="selected">{{$LANGUAGES[$@k]['name']}}</option>
-                            <?tpl else ?>
-                            <option value="{{$LANGUAGES[$@k]['id']}}">{{$LANGUAGES[$@k]['name']}}</option>
-                            <?tpl end ?>
-                        <?tpl end ?>
-                        </select>
-                    </form>
                 </th>
 				<th>{{$LANG['term_count']}}</th>
 				<th colspan="2">&nbsp;</th>

@@ -60,17 +60,11 @@
 				$this->error[] = lang::action_failed . ": " . $e->getMessage();
 			}
             
-            // Set a language filter.
-            if(isset($_GET["language"])) {
-                $_SESSION["language"] = $_GET["language"];
-            }
-            
 			$languager = new LanguagesController;
-			
+
 			$tpl->reg("LESSONS", $this->get_list(), true);
 			$tpl->reg("LANGUAGES", $languager->get_list(), true);
             $tpl->reg("SECTION", $_REQUEST["section"], true);
-			$tpl->reg("LANGUAGE", isset($_SESSION["language"]) ? $_SESSION["language"] : null, true);
             $tpl->reg("LANG", AdminFunctions::lang_to_array(), true);
 			$tpl->load("lessons.tpl");
 			$tpl->execute();
@@ -89,16 +83,16 @@
 					ORDER BY l.jmeno,l.jazyk"))) */
 // Cleaner, but slow:
 				$conds = array();
-                if(!empty($_REQUEST["section"]) && $_REQUEST["section"] == "lessons" && !empty($_SESSION["language"])) {
-					$conds[] = Lesson::COL_LANGUAGE . " = " . $_SESSION["language"];
-                }
 
-				if(!empty($_SESSION[master_config::APPLICATION]['active_user'])) {
-					$user_id = intval($_SESSION[master_config::APPLICATION]['active_user']);
-					$conds[] = "user_id = $user_id";
-				} else {
-					$conds[] = "FALSE";
+				$session = new Session($this->db);
+				$language_id = $session->getLanguage();
+				if(!$language_id) {
+					throw new Exception(lang::no_language_picked);
 				}
+				$conds[] = Lesson::COL_LANGUAGE . " = " . $language_id;
+
+				$user_id = intval($_SESSION[master_config::APPLICATION]['active_user']);
+				$conds[] = "user_id = $user_id";
 
 
 				$where = "";

@@ -119,6 +119,7 @@ class lang {
     const term_count = "Term count";
     const duplicate = "Duplicate";
     const terms = "Terms";
+    const no_language_picked = "No language picked.";
 
     // Term errors.
     const term_must_have_lesson = "Lesson can’t be set to no value.";
@@ -157,6 +158,7 @@ class lang {
 	// Login.
 	const user_id_not_provided = "User ID not provided.";
 	const invalid_user_id = "Invalid user ID.";
+	const user = "User";
 
 	// Db.
 	const NOT_SUPPORTED_ON_MYSQL = "Not supported on MySQL database.";

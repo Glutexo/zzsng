@@ -1,6 +1,7 @@
 <?php
 class Helpers {
-	static function ConvertToCamelCase($string) {
+
+	public static function ConvertToCamelCase($string) {
 		$parts = preg_split("/[^a-z]+/i",$string);
 		foreach($parts as &$part) {
 			$first_letter = substr($part, 0, 1);
@@ -11,5 +12,15 @@ class Helpers {
 
 		return implode("", $parts);
 	}
+
+	public static function ConvertToSnakeCase($string) {
+		preg_match_all("/[A-Z][a-z]*/", $string, $matches);
+		list($camelParts) = $matches;
+		$snakeParts = array_map(function($part) {
+			return strtolower($part);
+		}, $camelParts);
+		return implode('_', $snakeParts);
+	}
+
 }
 ?>

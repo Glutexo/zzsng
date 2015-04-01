@@ -14,7 +14,12 @@
   </head>
   <body>
   <div id="header">
-    <h1>{{PROJECT_NAME}}</h1>
-    <div id="login">{{LOGIN}}</div>
+    <div id="header_title">
+      <h1>{{PROJECT_NAME}}</h1>
+    </div>
+    <div id="header_controls">
+      <?tpl include 'header_controls.tpl' ?>
+    </div>
+    <div class="clear"></div>
   </div>
 <?tpl end ?>

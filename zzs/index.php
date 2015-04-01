@@ -2,11 +2,7 @@
 	/* *** Launching procedure *** */
 	
 	// Set up some global settings specific for this application.
-	class config extends master_config {
-		const DEMO_USER_ID = 2;
-
-		const DEFAULT_SECTION_NAME = "exam";
-	}
+	require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
 
 	class Application {
 		public $out = "";
@@ -14,6 +10,8 @@
 		public function __construct() {
 			$login = new Login;
 			$login->ensure();
+
+			LanguagesController::saveSessionValuesFromRequest();
 
 			DbMigration::migrate();
 		}
